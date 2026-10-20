@@ -24,8 +24,6 @@ export const objects: AstronomicalObject[] = [
     relationships: [
       { targetId: "sun", kind: "orbits" },
       { targetId: "earth", kind: "compares-with" },
-      { targetId: "europa", kind: "orbited-by" },
-      { targetId: "ganymede", kind: "orbited-by" },
     ],
     media: { type: "placeholder", alt: "Mercury represented as a cratered inner planet." },
     tags: ["inner solar system", "terrestrial planet"],
@@ -147,6 +145,8 @@ export const objects: AstronomicalObject[] = [
     relationships: [
       { targetId: "sun", kind: "orbits" },
       { targetId: "earth", kind: "compares-with" },
+      { targetId: "europa", kind: "orbited-by" },
+      { targetId: "ganymede", kind: "orbited-by" },
     ],
     media: { type: "placeholder", alt: "Jupiter represented as a banded gas giant." },
     tags: ["gas giant", "magnetosphere"],
@@ -744,7 +744,6 @@ export const objects: AstronomicalObject[] = [
     sourceIds: ["nasa-pleiades-distance"],
     relationships: [
       { targetId: "milky-way", kind: "contained-by" },
-      { targetId: "crab-nebula", kind: "near" },
     ],
     media: { type: "placeholder", alt: "The Pleiades represented as a compact blue star cluster." },
     tags: ["open cluster", "stellar evolution", "calibration"],
