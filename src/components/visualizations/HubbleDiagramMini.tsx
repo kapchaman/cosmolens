@@ -40,7 +40,7 @@ export function HubbleDiagramMini() {
           <div className="eyebrow">Scientific Phenomenon</div>
           <h2 className="mt-2 text-2xl font-semibold">Hubble-Lemaitre diagram</h2>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--muted)]">
-            A schematic relationship between distance and recession velocity. Real surveys require calibration and uncertainty analysis.
+            Synthetic points illustrate the low-redshift distance–recession relation. They are not survey measurements or a fit to the Hubble constant. Real observations require calibration and uncertainty analysis.
           </p>
         </div>
         <button className="button button-ghost min-h-9 px-3 text-sm" type="button" aria-pressed={showTrend} onClick={() => setShowTrend((value) => !value)}>
@@ -71,7 +71,7 @@ export function HubbleDiagramMini() {
         <label className="quiet-panel p-4">
           <span className="flex items-center gap-2 text-sm font-semibold">
             <Activity aria-hidden="true" size={15} color="var(--cyan)" />
-            Measurement scatter
+            Illustrative scatter
           </span>
           <input
             className="mt-3 w-full accent-[color:var(--cyan)]"

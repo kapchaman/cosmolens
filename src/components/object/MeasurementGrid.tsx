@@ -17,6 +17,7 @@ export function MeasurementGrid({ measurements }: { measurements: Measurement[] 
               {measurement.unit ? ` ${measurement.unit}` : ""}
             </div>
             <div className="confidence">{formatConfidence(measurement.confidence)}</div>
+            {measurement.note ? <p className="mt-3 text-xs text-[color:var(--muted)]">{measurement.note}</p> : null}
             {firstSource ? (
               <a
                 href={firstSource.url}

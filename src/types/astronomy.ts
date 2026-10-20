@@ -89,6 +89,7 @@ export type CosmicScaleNode = {
   subtitle: string;
   order: number;
   approximateSizeMeters: number;
+  sizeDescription: string;
   visualMode: CosmicScaleVisualMode;
   objectIds: string[];
   context: string;
@@ -104,6 +105,7 @@ export type GuidedJourneyStep = {
 };
 
 export type GuidedJourney = {
+  sourceIds: string[];
   id: string;
   title: string;
   summary: string;

@@ -1,6 +1,11 @@
 import type { ScientificSource } from "@/types/sources";
 
 export const sources: ScientificSource[] = [
+  { id: "nasa-dark-matter", title: "Dark Matter", organization: "NASA Science", type: "nasa", url: "https://science.nasa.gov/dark-matter/" },
+  { id: "nasa-cosmic-web", title: "Sheets and Voids", organization: "NASA Imagine the Universe", type: "nasa", url: "https://imagine.gsfc.nasa.gov/features/cosmic/sheets_voids_info.html", notes: "Supports the observed filament/void pattern; historical size records are not treated as current records." },
+  { id: "nasa-stellar-evolution", title: "Stars in an Exoplanet World", organization: "NASA Science", type: "nasa", url: "https://science.nasa.gov/exoplanets/stars/" },
+  { id: "nasa-cosmological-redshift", title: "Hubble Cosmological Redshift", organization: "NASA Science", type: "nasa", url: "https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-cosmological-redshift/" },
+
   {
     id: "nasa-planetary-fact-sheet",
     title: "Planetary Fact Sheet",
@@ -150,7 +155,7 @@ export const sources: ScientificSource[] = [
     id: "nasa-bullet-cluster-webb",
     title: "NASA Webb 'Pierces' Bullet Cluster, Refines Its Mass",
     organization: "NASA Science",
-    year: 2024,
+    year: 2025,
     type: "nasa",
     url: "https://science.nasa.gov/missions/webb/nasa-webb-pierces-bullet-cluster-refines-its-mass/",
   },
