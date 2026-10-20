@@ -3,6 +3,10 @@ import type { GuidedJourney } from "@/types/astronomy";
 export const journeys: GuidedJourney[] = [
   {
     id: "dark-matter-evidence",
+    conclusion: { title: "Independent evidence matters.", body: "Orbital motion and gravitational lensing provide independent ways to infer mass. In merging clusters, lensing maps can be offset from the X-ray-emitting gas. Together these observations support dark matter, but they do not identify its particle nature." },
+    atlasQuery: "dark matter",
+    comparison: { left: "bullet-cluster", right: "virgo-cluster" },
+    suggestedQuestion: "Compare the evidence from rotation curves and cluster lensing. What does it tell us about mass, and what does it leave unknown about dark matter?",
     title: "How do we know dark matter exists?",
     summary:
       "Follow several independent lines of evidence: galaxy rotation, lensing, cluster collisions, and large-scale structure.",
@@ -32,6 +36,10 @@ export const journeys: GuidedJourney[] = [
   },
   {
     id: "life-of-a-star",
+    conclusion: { title: "A star’s mass shapes its evolution.", body: "Stars form in collapsing gas clouds and spend their main-sequence lives fusing hydrogen. Their later evolution depends strongly on mass: a Sun-like star leaves a white dwarf, while massive stars can undergo core collapse. An HR diagram compares stellar properties; it is not a single life track followed by every star." },
+    atlasQuery: "star",
+    comparison: { left: "sun", right: "betelgeuse" },
+    suggestedQuestion: "Compare the evolution of the Sun and a massive star such as Betelgeuse. Separate observations from stellar models, and explain what an HR diagram can tell us.",
     title: "The life of a star",
     summary: "From stellar nurseries to main-sequence stars, red supergiants, and stellar remnants.",
     status: "mvp",
@@ -59,6 +67,10 @@ export const journeys: GuidedJourney[] = [
   },
   {
     id: "universe-expansion",
+    conclusion: { title: "Expansion emerges on large scales.", body: "The large-scale distance–redshift trend supports an expanding universe. Local gravitational motion can dominate nearby, so Andromeda approaching the Milky Way is not a contradiction. Measuring expansion history requires calibrated distances and models, not a straight line alone." },
+    atlasQuery: "galaxy",
+    comparison: { left: "andromeda", right: "milky-way" },
+    suggestedQuestion: "How does the distance–redshift relation support cosmic expansion, and why can Andromeda approach the Milky Way? Distinguish observations, distance calibration, and model assumptions.",
     title: "How do we know the universe is expanding?",
     summary:
       "Explore recession velocities, distance indicators, Hubble-Lemaitre expansion, and why local motion can differ from cosmic expansion.",

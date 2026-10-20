@@ -19,6 +19,7 @@ export function MyCosmosPanel() {
   const [notes, setNotes] = useState<CosmosNote[]>([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [feedback, setFeedback] = useState<{ error: boolean; text: string } | null>(null);
 
   useEffect(() => {
     setSavedObjects(readSavedObjects());
@@ -32,14 +33,24 @@ export function MyCosmosPanel() {
 
   function removeObject(id: string) {
     const next = savedObjects.filter((object) => object.id !== id);
-    setSavedObjects(next);
-    writeSavedObjects(next);
+    try {
+      writeSavedObjects(next);
+      setSavedObjects(next);
+      setFeedback({ error: false, text: "Object removed." });
+    } catch {
+      setFeedback({ error: true, text: "Could not remove the object. Check browser storage and try again." });
+    }
   }
 
   function removeNote(id: string) {
     const next = notes.filter((note) => note.id !== id);
-    setNotes(next);
-    writeCosmosNotes(next);
+    try {
+      writeCosmosNotes(next);
+      setNotes(next);
+      setFeedback({ error: false, text: "Note removed." });
+    } catch {
+      setFeedback({ error: true, text: "Could not remove the note. Check browser storage and try again." });
+    }
   }
 
   function submitNote(event: FormEvent<HTMLFormElement>) {
@@ -62,14 +73,20 @@ export function MyCosmosPanel() {
       ...notes,
     ];
 
-    setNotes(next);
-    writeCosmosNotes(next);
-    setTitle("");
-    setBody("");
+    try {
+      writeCosmosNotes(next);
+      setNotes(next);
+      setTitle("");
+      setBody("");
+      setFeedback({ error: false, text: "Note saved on this device." });
+    } catch {
+      setFeedback({ error: true, text: "Note was not saved. Your draft is still here. Check browser storage and try again." });
+    }
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+    <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+      {feedback ? <p className="quiet-panel p-4 lg:col-span-2" role={feedback.error ? "alert" : "status"}>{feedback.text}</p> : null}
       <section className="panel p-5 md:p-6">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
@@ -100,7 +117,7 @@ export function MyCosmosPanel() {
           </div>
         ) : (
           <div className="quiet-panel p-5 text-sm text-[color:var(--muted)]">
-            No saved objects yet.
+            No saved objects yet. <Link href="/atlas" className="underline">Explore the atlas</Link> and save something that interests you.
           </div>
         )}
       </section>
@@ -134,6 +151,8 @@ export function MyCosmosPanel() {
             </label>
             <input
               id="cosmos-note-title"
+              required
+              maxLength={200}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               className="min-h-11 rounded-md border border-[color:var(--border)] bg-black/20 px-3 outline-none placeholder:text-[color:var(--muted-strong)]"
@@ -144,6 +163,8 @@ export function MyCosmosPanel() {
             </label>
             <textarea
               id="cosmos-note-body"
+              required
+              maxLength={20000}
               value={body}
               onChange={(event) => setBody(event.target.value)}
               className="min-h-28 resize-y rounded-md border border-[color:var(--border)] bg-black/20 p-3 outline-none placeholder:text-[color:var(--muted-strong)]"

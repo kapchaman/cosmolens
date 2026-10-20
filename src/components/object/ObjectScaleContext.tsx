@@ -22,7 +22,7 @@ export function ObjectScaleContext({ objectId }: { objectId: string }) {
         {scaleNodes.map((node) => (
           <Link
             key={node.id}
-            href="/#cosmic-scale"
+            href={`/?scale=${encodeURIComponent(node.id)}#cosmic-scale`}
             className="quiet-panel flex items-start justify-between gap-4 p-4 hover:border-[color:var(--border-strong)]"
           >
             <span>
