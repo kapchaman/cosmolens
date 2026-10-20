@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "visual:smoke": "playwright test tests/e2e/reliability.spec.ts",
+    "visual:smoke": "playwright test",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
