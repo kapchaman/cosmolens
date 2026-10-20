@@ -49,6 +49,6 @@ AI is not required for the first public release. A zero-budget content release w
 - PR #6: mobile/keyboard improvements, browser regressions and screenshot review.
 - PR #7: isolated AI protection foundation; real Redis race tests pass; public route stays disabled.
 - PR #8: sourced scientific corrections and catalog integrity; remaining editorial scope is explicit.
-- Release-preparation branch: indexing, privacy, headers, health and current deployment/runbook documentation.
+- PR #9: indexing, privacy, headers, health and current deployment/runbook documentation.
 
 PRs are stacked and no changes have been merged to main. The critical remaining work for November 13 is review/merge, host identification, manual accessibility/science checks and an approved deployment rehearsal. Full authenticated AI integration is a separate project gate and should not consume the content release's remaining time unless its prerequisites become available.

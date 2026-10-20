@@ -13,7 +13,7 @@ No deployment has been performed. This runbook prepares a release with **AI disa
 
 ## Review and release procedure
 
-1. Review PRs in order #4, #5, #6, #7, #8, then the release-preparation PR. After an approved merge, retarget the next PR to main and rebase if needed (especially after squash merging). Re-run CI on the resulting head; a green stacked branch is not proof that a differently merged commit is green.
+1. Review PRs in order #4, #5, #6, #7, #8, then #9. After an approved merge, retarget the next PR to main and rebase if needed (especially after squash merging). Re-run CI on the resulting head; a green stacked branch is not proof that a differently merged commit is green.
 2. Record the exact candidate SHA, environment, owner and rollback SHA. Do not bundle unrelated features after the November 6 freeze.
 3. Require TypeScript, unit/API tests, isolated Redis tests, build and browser tests. Inspect browser artifacts. Run `npm audit --omit=dev --audit-level=high` and investigate findings rather than blindly updating dependencies.
 4. On the approved private preview, verify TLS, expected commit, root/object/journey routes, unknown-route 404, Atlas/scale URLs and NASA/news fallback behavior. Verify security headers survive the host's proxy.
