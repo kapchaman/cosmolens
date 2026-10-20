@@ -221,6 +221,9 @@ button:disabled {
 
 }
 
+/* Anchor reset must not override the primary action text contrast. */
+a.button-primary { color: #15120c; }
+
 .object-card {
   min-height: 260px;
   display: flex;
