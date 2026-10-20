@@ -25,3 +25,7 @@ Local verification on 2026-10-21: 42 unit/API tests and production build passed.
 `.github/workflows/ci.yml` runs on pull requests (including stacked PRs) and pushes to main. It uses Node 24, a lockfile install and a Playwright-managed Chromium browser. It requires no repository secrets, has read-only repository permissions, cancels superseded runs and keeps browser evidence for seven days. No deployment job exists. The entire browser suite is also the portable smoke gate (`npm run visual:smoke` or `node scripts/visual-smoke.mjs`).
 
 The actual CI result must be inspected before marking a release ready. The existence of a workflow file alone is not passing evidence.
+
+## Shared AI admission tests
+
+`npm run test:redis` requires an **isolated local test Redis**, supplied as `TEST_REDIS_URL=redis://127.0.0.1:6379`. The test refuses a remote host and removes only its own random test namespace. GitHub Actions provisions an ephemeral Redis 7 service and runs this suite. Unit/API tests use injected fake generation only; public AI remains 503. No OpenAI key is needed or used. These tests verify the isolated protection foundation, not production authentication, provider pricing, or store durability.

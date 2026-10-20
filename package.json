@@ -11,7 +11,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:redis": "node --experimental-strip-types --test tests/integration/redis.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -27,6 +28,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "playwright-core": "1.63.0",
+    "redis": "^6.3.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.6.0",
     "vitest": "^4.1.12"
