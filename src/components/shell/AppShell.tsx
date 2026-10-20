@@ -31,6 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-[color:var(--border)] py-8">
         <div className="app-container flex flex-col justify-between gap-3 text-sm text-[color:var(--muted)] md:flex-row">
           <span>CosmoLens is built around sourced astronomy, explicit uncertainty, and contextual AI.</span>
+          <Link href="/privacy" className="underline">Privacy and local data</Link>
           <span>Sourced exploration • AI temporarily offline</span>
         </div>
       </footer>

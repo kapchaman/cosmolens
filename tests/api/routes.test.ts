@@ -31,3 +31,10 @@ test("news tolerates partial source failure", async () => {
   const body = await (await newsGet()).json();
   expect(body.status).toBe("live"); expect(body.items).toHaveLength(1); expect(body.errors).toHaveLength(2);
 });
+
+
+test("health exposes only liveness and intentional AI status", async () => {
+  const { GET } = await import("@/app/api/health/route");
+  const fetch = vi.fn(); vi.stubGlobal("fetch",fetch);const response=GET();
+  expect(await response.json()).toEqual({status:"ok",ai:"disabled"});expect(response.headers.get("cache-control")).toBe("no-store");expect(fetch).not.toHaveBeenCalled();
+});
