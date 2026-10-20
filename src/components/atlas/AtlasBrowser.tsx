@@ -84,14 +84,14 @@ function AtlasBrowserContent({ objects }: { objects: AstronomicalObject[] }) {
       </div>
 
       <div className="panel p-4">
-        <div className="flex flex-col gap-3 lg:flex-row">
+        <div className="flex flex-col gap-3">
           <label className="flex min-h-12 flex-1 items-center gap-3 rounded-md border border-[color:var(--border)] bg-black/20 px-3">
             <Search aria-hidden="true" size={18} color="var(--muted)" />
             <span className="sr-only">Search atlas</span>
             <input
               value={query}
               onChange={(event) => updateQuery({ query: event.target.value })}
-              className="w-full bg-transparent outline-none placeholder:text-[color:var(--muted-strong)]"
+              className="min-w-0 w-full bg-transparent outline-none placeholder:text-[color:var(--muted-strong)]"
               placeholder="Search objects, concepts, phenomena..."
             />
           </label>
@@ -100,7 +100,7 @@ function AtlasBrowserContent({ objects }: { objects: AstronomicalObject[] }) {
             {categories.map((item) => (
               <button
                 key={item}
-                className={`button min-h-10 whitespace-nowrap px-3 ${category === item ? "button-primary" : "button-ghost"}`}
+                className={`button min-h-10 shrink-0 whitespace-nowrap px-3 ${category === item ? "button-primary" : "button-ghost"}`}
                 type="button"
                 aria-pressed={category === item}
                 onClick={() => updateQuery({ category: item === "all" ? null : item }, true)}

@@ -18,7 +18,7 @@ export function SearchCommand() {
     const element = dialog.current;
     if (!element) return;
     if (!open) { if (element.open) element.close(); return; }
-    element.showModal(); // Native modal makes the background inert and traps Tab.
+    element.showModal(); // Native modal makes the background inert.
     input.current?.focus();
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -30,7 +30,13 @@ export function SearchCommand() {
       <button ref={trigger} className="button button-ghost min-h-11 px-3" type="button" aria-label="Search CosmoLens" aria-haspopup="dialog" onClick={() => setOpen(true)}>
         <Search aria-hidden="true" size={16} /><span className="hidden sm:inline">Search</span>
       </button>
-      <dialog ref={dialog} className="search-dialog panel" aria-label="Search CosmoLens" onCancel={() => setOpen(false)} onClose={() => { setOpen(false); trigger.current?.focus(); }} onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
+      <dialog ref={dialog} className="search-dialog panel" aria-label="Search CosmoLens" onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href], [tabindex="0"]')).filter((element) => element.getClientRects().length > 0);
+        const first = items[0]; const last = items.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }} onCancel={() => setOpen(false)} onClose={() => { setOpen(false); trigger.current?.focus(); }} onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
         <div className="flex items-center gap-3 border-b border-[color:var(--border)] p-4">
           <label htmlFor={id} className="sr-only">Search objects and journeys</label>
           <input ref={input} id={id} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search objects, concepts, phenomena…" className="min-h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-[color:var(--muted-strong)] sm:text-lg" />

@@ -39,3 +39,11 @@ test('skip link reaches the main landmark', async ({ page }) => {
   await expect(skip).toBeFocused(); await page.keyboard.press('Enter');
   await expect(page.getByRole('main')).toBeFocused();
 });
+
+
+test('desktop navigation replaces the mobile menu at wide widths', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/atlas');
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open navigation' })).not.toBeVisible();
+});

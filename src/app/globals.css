@@ -182,6 +182,7 @@ button:disabled {
   font-size: 0.72rem;
 }
 
+@layer components {
 .button {
   display: inline-flex;
   align-items: center;
@@ -216,6 +217,8 @@ button:disabled {
 
 .button-ghost {
   background: transparent;
+}
+
 }
 
 .object-card {
@@ -307,12 +310,12 @@ button:disabled {
   }
 
   .headline {
-    font-size: clamp(2.3rem, 18vw, 4.2rem);
+    font-size: clamp(2.3rem, 12vw, 3.2rem);
   }
 }
 
 /* Keep nested grid/flex children and long scientific names within narrow screens. */
-.grid > *, .flex > * { min-width: 0; }
+.grid > * { min-width: 0; }
 h1, h2, h3, p { overflow-wrap: anywhere; }
 input, textarea, select { max-width: 100%; }
 :target { scroll-margin-top: 6rem; }
