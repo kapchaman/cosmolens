@@ -1,6 +1,7 @@
 import type { ScientificSource } from "@/types/sources";
 
 export const sources: ScientificSource[] = [
+  { id: "nasa-uranus-fact-sheet", title: "Uranus Fact Sheet", organization: "NASA Goddard Space Flight Center", type: "nasa", url: "https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" },
   { id: "nasa-dark-matter", title: "Dark Matter", organization: "NASA Science", type: "nasa", url: "https://science.nasa.gov/dark-matter/" },
   { id: "nasa-cosmic-web", title: "Sheets and Voids", organization: "NASA Imagine the Universe", type: "nasa", url: "https://imagine.gsfc.nasa.gov/features/cosmic/sheets_voids_info.html", notes: "Supports the observed filament/void pattern; historical size records are not treated as current records." },
   { id: "nasa-stellar-evolution", title: "Stars in an Exoplanet World", organization: "NASA Science", type: "nasa", url: "https://science.nasa.gov/exoplanets/stars/" },
@@ -163,7 +164,7 @@ export const sources: ScientificSource[] = [
     id: "nasa-pleiades-distance",
     title: "Spot the Young Stars of the Hyades and Pleiades",
     organization: "NASA Science",
-    year: 2024,
+    year: 2023,
     type: "nasa",
     url: "https://science.nasa.gov/solar-system/skywatching/night-sky-network/spot-the-young-stars-of-the-hyades-and-pleiades/",
   },

@@ -189,8 +189,8 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Uranus is central to understanding ice giant interiors, tilted magnetospheres, seasonal extremes, and a common class of planets around other stars.",
     measurements: [
-      { label: "Equatorial radius", value: "25,559", unit: "km", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
-      { label: "Mean distance from Sun", value: "2.871", unit: "billion km", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
+      { label: "Equatorial radius", value: "25,559", unit: "km", confidence: "measured", sourceIds: ["nasa-uranus-fact-sheet"] },
+      { label: "Mean distance from Sun", value: "2.867", unit: "billion km", confidence: "measured", sourceIds: ["nasa-uranus-fact-sheet"], note: "Rounded semimajor axis from the NASA fact sheet." },
       { label: "Magnetic axis tilt", value: "nearly 60", unit: "degrees", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
     ],
     composition: ["hydrogen", "helium", "water/ammonia/methane ices", "rocky material"],
@@ -237,7 +237,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Europa connects orbital tides, ocean-world habitability, surface chemistry, and mission-driven exploration through NASA's Europa Clipper.",
     measurements: [
-      { label: "Diameter", value: "3,100", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
+      { label: "Equatorial diameter", value: "3,122", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
       { label: "Orbital distance from Jupiter", value: "671,000", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
       { label: "Orbital period", value: "3.55", unit: "Earth days", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
     ],
@@ -586,7 +586,7 @@ export const objects: AstronomicalObject[] = [
     measurements: [
       { label: "Nebula span", value: "70 by 55", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
       { label: "Pillars height", value: "roughly 4 to 5", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
-      { label: "Distance", value: "about 5,700", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
+      { label: "Distance", value: "about 7,000", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"], note: "Approximate distance adopted in the cited Hubble catalog; the physical span on this page uses that same source." },
     ],
     composition: ["hydrogen gas", "dust", "young stars"],
     sourceIds: ["nasa-eagle-nebula-m16"],
