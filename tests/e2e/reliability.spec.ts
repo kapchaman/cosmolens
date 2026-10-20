@@ -7,6 +7,9 @@ test("Atlas query/category deep links survive reload and history navigation", as
   await page.getByRole("textbox", { name: "Search atlas" }).fill("Saturn");
   await page.reload(); await expect(page.getByRole("textbox", { name: "Search atlas" })).toHaveValue("Saturn");
   await page.getByRole("button", { name: /^Moon/ }).click();
+  await expect(page.getByRole("button", { name: /^Moon/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/category=moon/);
+  await page.getByRole("textbox", { name: "Search atlas" }).fill("no-such-object-xyz");
   await expect(page.getByText("No curated object matches")).toBeVisible();
   await page.goBack(); await expect(page.getByRole("button", { name: /^Planet/ })).toHaveAttribute("aria-pressed", "true");
 });
@@ -41,7 +44,7 @@ test("failed save keeps draft and does not claim persistence", async ({ page }) 
   await page.getByRole("textbox", { name: "Note title" }).fill("Keep my draft");
   await page.getByRole("textbox", { name: "Note body" }).fill("Useful notes");
   await page.getByRole("button", { name: "Add note" }).click();
-  await expect(page.getByRole("alert")).toContainText("Note was not saved");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("Note was not saved");
   await expect(page.getByRole("textbox", { name: "Note title" })).toHaveValue("Keep my draft");
   await expect(page.getByRole("heading", { name: "Keep my draft" })).toHaveCount(0);
 });
