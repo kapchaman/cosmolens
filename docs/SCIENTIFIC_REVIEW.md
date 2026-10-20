@@ -1,6 +1,6 @@
 # Scientific review — 2026-10-20
 
-Acceptance: claims link to relevant primary sources; measurement labels state their meaning; models are distinguishable from observations; catalog IDs and units remain internally consistent. This is a targeted source review and a complete structural validation of the current catalog, not an independent astronomical measurement campaign.
+Acceptance: claims link to relevant primary sources; measurement labels state their meaning; models are distinguishable from observations; catalog IDs and units remain internally consistent. This is a review of the current catalog measurements and a complete structural validation, not an independent astronomical measurement campaign.
 
 ## Reviewed and corrected
 
@@ -16,13 +16,19 @@ Acceptance: claims link to relevant primary sources; measurement labels state th
 | Scale explorer | A viewing span is not an object's diameter or its distance from Earth. Every node now describes its scale reference. Neptune's orbit is not the Solar System's outer boundary. | Existing fact-sheet measurements plus explicitly labeled illustrative choices |
 | Journeys / graphs | Added directly accessible journey sources, corrected “fusion pressure” wording, labeled drawn rotation curves and synthetic Hubble points. No graph is presented as a fitted dataset. | [stellar evolution](https://science.nasa.gov/exoplanets/stars/), [redshift](https://science.nasa.gov/mission/hubble/science/science-behind-the-discoveries/hubble-cosmological-redshift/) |
 
+## Extended catalog check
+
+The remaining catalog measurement sources were opened and checked against their entries: NASA Uranus/Neptune fact sheets; JPL Europa Clipper quick facts; NASA Ganymede/Titan facts; SIMBAD Sirius/Rigel classifications; NASA Proxima/Betelgeuse pages; Milky Way, Andromeda, M33 and M87 material; Orion/Eagle/Carina/Crab nebula pages; Pleiades, Virgo and Galactic Center pages. Approximate historical distance estimates remain labeled as estimates, not current precision determinations.
+
+Additional corrections: Europa's cited equatorial diameter is 3,122 km; Uranus uses the detailed fact sheet for its 25,559 km equatorial radius and rounded 2.867 billion km semimajor axis; Eagle Nebula distance is about 7,000 light-years in the cited Hubble catalog, consistent with the span attributed to that source; Pleiades source publication date is December 15, 2023. The schematic HR diagram now places B-type Rigel hotter than A-type Sirius A, and the red dwarf Proxima cooler than Betelgeuse; the plotted Sirius component is named explicitly.
+
 ## Automated coverage
 
 All 33 objects, ten scale nodes, three journeys and source records are checked for duplicate IDs, unresolved citations, invalid relationship targets, missing scale descriptions and inconsistent diameter conversions. Model-dependent entries must preserve their notes. These integrity tests do not prove that a citation supports every sentence.
 
 ## Remaining scientific acceptance
 
-- Complete a sentence-by-sentence editorial review of the remaining stellar classifications, nebular distances, sky-planner seasonal advice and thought experiments. Existing source links alone are not evidence that each has been freshly verified.
+- A final independent editorial review should check explanatory prose, sky-planner seasonal advice and thought experiments. The catalog measurement/source check above does not validate every qualitative statement or establish new precision distance measurements.
 - Record source versions and a review date per measurement when the content workflow grows. Avoid changing all dates merely because a build ran.
 - The Observation Planner remains seasonal guidance with approximate lunar phase, not a site/time ephemeris or a claim of real-time visibility.
 - Lab diagrams are explanatory models; do not infer precision, fitted Hubble parameters, particle identity or exact observing predictions from them.
