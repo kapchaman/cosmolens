@@ -1,0 +1,16 @@
+.next
+node_modules
+out
+build
+dist
+.env
+.env.local
+.env.*.local
+*.log
+*.tsbuildinfo
+tmp/
+
+# Keep credentials local; commit only the template.
+.env.*
+!.env.example
+
