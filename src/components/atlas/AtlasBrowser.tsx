@@ -115,6 +115,7 @@ function AtlasBrowserContent({ objects }: { objects: AstronomicalObject[] }) {
         </div>
       </div>
 
+      <p className="mt-4 text-sm text-[color:var(--muted)]" role="status">{filtered.length} matching entries</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((object) => (
           <ObjectCard key={object.id} object={object} />

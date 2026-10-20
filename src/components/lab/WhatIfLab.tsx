@@ -52,6 +52,7 @@ export function WhatIfLab({ scenarios }: { scenarios: WhatIfScenario[] }) {
                   : "border-[color:var(--border)] bg-transparent hover:bg-white/[0.04]"
               }`}
               type="button"
+              aria-pressed={scenario.id === selected.id}
               onClick={() => selectScenario(scenario.id)}
             >
               <span className="block text-sm font-semibold">{scenario.title}</span>
