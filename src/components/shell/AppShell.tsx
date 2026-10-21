@@ -1,20 +1,12 @@
 import Link from "next/link";
-import { Search, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { Navigation } from "@/components/shell/Navigation";
 import { SearchCommand } from "@/components/search/SearchCommand";
-
-const navItems = [
-  { href: "/", label: "Explore" },
-  { href: "/atlas", label: "Atlas" },
-  { href: "/compare", label: "Compare" },
-  { href: "/journeys", label: "Journeys" },
-  { href: "/lab", label: "Lab" },
-  { href: "/observe", label: "Observe" },
-  { href: "/my-cosmos", label: "My Cosmos" },
-];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="page-shell">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <header className="sticky top-0 z-40 border-b border-[color:var(--border)] bg-[rgba(5,6,7,0.82)] backdrop-blur-xl">
         <div className="app-container flex min-h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3" aria-label="CosmoLens home">
@@ -29,31 +21,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href} className="button button-ghost min-h-9 px-3 text-sm">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
           <div className="flex items-center gap-2">
-            <SearchCommand
-              trigger={
-                <button className="button button-ghost min-h-9 px-3" type="button">
-                  <Search aria-hidden="true" size={16} />
-                  <span className="hidden sm:inline">Search</span>
-                </button>
-              }
-            />
+            <Navigation />
+            <SearchCommand />
           </div>
         </div>
       </header>
-      <main className="flex-1">{children}</main>
+      <main id="main-content" tabIndex={-1} className="min-w-0 flex-1">{children}</main>
       <footer className="border-t border-[color:var(--border)] py-8">
         <div className="app-container flex flex-col justify-between gap-3 text-sm text-[color:var(--muted)] md:flex-row">
           <span>CosmoLens is built around sourced astronomy, explicit uncertainty, and contextual AI.</span>
-          <span>Phase 1 foundation</span>
+          <span>Sourced exploration • AI temporarily offline</span>
         </div>
       </footer>
     </div>

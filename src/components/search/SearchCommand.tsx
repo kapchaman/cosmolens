@@ -1,65 +1,60 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { X } from "lucide-react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { Search, X } from "lucide-react";
 import { globalSearch } from "@/lib/astronomy/search";
 
-export function SearchCommand({ trigger }: { trigger: React.ReactNode }) {
+export function SearchCommand() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const dialog = useRef<HTMLDialogElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const id = useId();
   const results = useMemo(() => globalSearch(query), [query]);
+
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+    if (!open) { if (element.open) element.close(); return; }
+    element.showModal(); // Native modal makes the background inert.
+    input.current?.focus();
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = overflow; if (element.open) element.close(); };
+  }, [open]);
 
   return (
     <>
-      <span onClick={() => setOpen(true)}>{trigger}</span>
-      {open ? (
-        <div
-          className="fixed inset-0 z-50 bg-black/70 px-3 py-16 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Search CosmoLens"
-        >
-          <div className="mx-auto max-w-2xl panel">
-            <div className="flex items-center gap-3 border-b border-[color:var(--border)] p-4">
-              <input
-                autoFocus
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search objects, concepts, phenomena..."
-                className="min-h-12 flex-1 bg-transparent text-lg outline-none placeholder:text-[color:var(--muted-strong)]"
-              />
-              <button className="button button-ghost size-10 p-0" type="button" onClick={() => setOpen(false)} aria-label="Close search">
-                <X aria-hidden="true" size={18} />
-              </button>
-            </div>
-            <div className="max-h-[62vh] overflow-y-auto p-3">
-              {query.trim() && results.length === 0 ? (
-                <div className="quiet-panel p-5 text-sm text-[color:var(--muted)]">
-                  No matching object yet. The catalog is intentionally curated and will expand in phases.
-                </div>
-              ) : null}
-              {results.map((result) => (
-                <Link
-                  key={result.id}
-                  href={result.href}
-                  className="block rounded-md border border-transparent p-4 hover:border-[color:var(--border)] hover:bg-white/[0.04]"
-                  onClick={() => setOpen(false)}
-                >
-                  <span className="tiny-label">{result.eyebrow}</span>
-                  <span className="mt-1 block text-base font-semibold">{result.title}</span>
-                  <span className="mt-1 block text-sm text-[color:var(--muted)]">{result.summary}</span>
-                </Link>
-              ))}
-              {!query.trim() ? (
-                <div className="grid gap-2 p-2 text-sm text-[color:var(--muted)]">
-                  <span>Try: Andromeda, lensing, dark matter, Jupiter, Sagittarius A*</span>
-                </div>
-              ) : null}
-            </div>
-          </div>
+      <button ref={trigger} className="button button-ghost min-h-11 px-3" type="button" aria-label="Search CosmoLens" aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <Search aria-hidden="true" size={16} /><span className="hidden sm:inline">Search</span>
+      </button>
+      <dialog ref={dialog} className="search-dialog panel" aria-label="Search CosmoLens" onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href], [tabindex="0"]')).filter((element) => element.getClientRects().length > 0);
+        const first = items[0]; const last = items.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }} onCancel={() => setOpen(false)} onClose={() => { setOpen(false); trigger.current?.focus(); }} onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
+        <div className="flex items-center gap-3 border-b border-[color:var(--border)] p-4">
+          <label htmlFor={id} className="sr-only">Search objects and journeys</label>
+          <input ref={input} id={id} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search objects, concepts, phenomena…" className="min-h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-[color:var(--muted-strong)] sm:text-lg" />
+          <button className="button button-ghost size-11 shrink-0 p-0" type="button" onClick={() => setOpen(false)} aria-label="Close search"><X aria-hidden="true" size={18} /></button>
         </div>
-      ) : null}
+        <div className="max-h-[60dvh] overflow-y-auto p-3">
+          <p className="sr-only" role="status">{query.trim() ? `${results.length} search results` : "Enter a search term"}</p>
+          {query.trim() && results.length === 0 ? <p className="quiet-panel p-5 text-sm text-[color:var(--muted)]">No matching entry yet. Try a shorter name or a broader topic.</p> : null}
+          {results.map((result) => (
+            <Link key={result.id} href={result.href} className="block rounded-md border border-transparent p-4 hover:border-[color:var(--border)] hover:bg-white/[0.04]" onClick={() => setOpen(false)}>
+              <span className="tiny-label">{result.eyebrow}</span>
+              <span className="mt-1 block text-base font-semibold">{result.title}</span>
+              <span className="mt-1 block text-sm text-[color:var(--muted)]">{result.summary}</span>
+            </Link>
+          ))}
+          {!query.trim() ? <p className="p-2 text-sm text-[color:var(--muted)]">Try: Andromeda, lensing, dark matter, Jupiter, Sagittarius A*</p> : null}
+        </div>
+      </dialog>
     </>
   );
 }

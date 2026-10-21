@@ -24,8 +24,11 @@ function formatDate(value: string | null) {
 export function LatestDiscoveriesPanel({ compact = false, showOpenLink = true }: { compact?: boolean; showOpenLink?: boolean }) {
   const [state, setState] = useState<NewsState>({ status: "loading" });
 
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
     const controller = new AbortController();
+    setState({ status: "loading" });
 
     async function loadNews() {
       try {
@@ -48,7 +51,7 @@ export function LatestDiscoveriesPanel({ compact = false, showOpenLink = true }:
 
     loadNews();
     return () => controller.abort();
-  }, []);
+  }, [attempt]);
 
   return (
     <section className={compact ? "" : "section"} id="discoveries">
@@ -79,6 +82,7 @@ export function LatestDiscoveriesPanel({ compact = false, showOpenLink = true }:
             <div className="flex items-center gap-3 text-[color:var(--red)]">
               <AlertTriangle aria-hidden="true" size={18} />
               {state.message}
+              <button type="button" className="button button-ghost" onClick={() => setAttempt((value) => value + 1)}>Retry</button>
             </div>
           </div>
         ) : null}

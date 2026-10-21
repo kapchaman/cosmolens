@@ -43,7 +43,7 @@ export function HubbleDiagramMini() {
             A schematic relationship between distance and recession velocity. Real surveys require calibration and uncertainty analysis.
           </p>
         </div>
-        <button className="button button-ghost min-h-9 px-3 text-sm" type="button" onClick={() => setShowTrend((value) => !value)}>
+        <button className="button button-ghost min-h-9 px-3 text-sm" type="button" aria-pressed={showTrend} onClick={() => setShowTrend((value) => !value)}>
           {showTrend ? <Eye aria-hidden="true" size={15} /> : <EyeOff aria-hidden="true" size={15} />}
           Expansion trend
         </button>

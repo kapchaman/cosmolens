@@ -12,8 +12,11 @@ type ApodState =
 export function ApodPanel() {
   const [state, setState] = useState<ApodState>({ status: "loading" });
 
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
     const controller = new AbortController();
+    setState({ status: "loading" });
 
     async function loadApod() {
       try {
@@ -39,7 +42,7 @@ export function ApodPanel() {
 
     loadApod();
     return () => controller.abort();
-  }, []);
+  }, [attempt]);
 
   return (
     <section className="section" id="apod">
@@ -74,6 +77,7 @@ export function ApodPanel() {
             <div className="flex items-center gap-3 text-[color:var(--red)]">
               <AlertTriangle aria-hidden="true" size={18} />
               <span>{state.message}</span>
+              <button type="button" className="button button-ghost" onClick={() => setAttempt((value) => value + 1)}>Retry</button>
             </div>
           </div>
         ) : null}

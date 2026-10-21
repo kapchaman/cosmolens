@@ -28,7 +28,7 @@ export function HRDiagramMini() {
       </div>
 
       <div className="visual-frame h-[320px] p-5">
-        <svg className="h-full w-full" role="img" aria-label="Schematic Hertzsprung-Russell diagram" viewBox="0 0 520 260">
+        <svg className="h-full w-full" role="group" aria-label="Schematic Hertzsprung-Russell diagram" viewBox="0 0 520 260">
           <line x1="52" x2="482" y1="208" y2="208" stroke="rgba(255,255,255,0.28)" />
           <line x1="52" x2="52" y1="30" y2="208" stroke="rgba(255,255,255,0.28)" />
           <text x="52" y="238" fill="rgba(255,255,255,0.62)" fontSize="12">hotter stars</text>
@@ -49,6 +49,7 @@ export function HRDiagramMini() {
               role="button"
               tabIndex={0}
               aria-label={`Select ${star.name}`}
+              aria-pressed={selected.id === star.id}
               className="cursor-pointer outline-none"
               onClick={() => setSelected(star)}
               onKeyDown={(event) => {
