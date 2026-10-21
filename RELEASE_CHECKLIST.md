@@ -1,42 +1,41 @@
-# CosmoLens v1 release checklist
+# CosmoLens release checklist — target November 13, 2026
 
-## P0 — must pass before public release
-- [ ] Identify hosting provider, deployment URL, production branch, rollback mechanism and allowed commercial usage.
-- [ ] Keep paid AI endpoint disabled until trusted identification, distributed rate limits, global budget guard, and kill switch are verified in deployed environment.
-- [ ] Enforce streamed request body size cap, strict schema validation, token limits and safe upstream error handling.
-- [ ] Remove public key fingerprint/model diagnostics and confirm no secrets appear in client bundles, logs or repository.
-- [ ] Correct Mercury relationships (Europa and Ganymede belong to Jupiter); audit other scientific relations and sources.
-- [ ] Verify environment variables are stored as server secrets, never `NEXT_PUBLIC_` values.
-- [ ] Verify production build and typecheck on the actual release commit.
-- [ ] Check mobile navigation and critical journeys manually on narrow screens.
+Completed items below describe **review branches**, not merged main or a deployed service. Revalidate the actual approved release SHA after merges. No public deployment is authorized yet.
 
-## P1 — quality and reliability
-- [ ] Validate and recover malformed `localStorage` records.
-- [ ] Surface failed note saves; do not imply persistence after exceptions.
-- [ ] Make journey conclusion and AI prompts specific to each journey.
-- [ ] Reset or partition assistant history when comparison context changes.
-- [ ] Ensure AI response length does not break subsequent history validation.
-- [ ] Validate APOD payload before labeling it live.
-- [ ] Restore URL query/deep-link state in Atlas and scale explorer.
-- [ ] Fix keyboard focus trap, Escape close and focus return for search modal.
-- [ ] Add portable browser tests, unit/API tests, and CI; avoid hard-coded browser executables.
-- [ ] Review Atom alternate link selection and observation date edge cases.
+## Engineering implemented and tested
 
-## Release verification
-- [ ] Confirm astronomical facts against cited primary/credible sources.
-- [ ] Test accessibility with keyboard and screen reader basics.
-- [ ] Test fallback behavior when NASA or OpenAI is unavailable.
-- [ ] Confirm error monitoring, privacy notice and safe logging.
-- [ ] Check performance on mobile and slow networks.
-- [ ] Run smoke tests against preview and production URLs.
-- [ ] Document release commit, known limitations, rollback and emergency AI-disable procedure.
-- [ ] Have founder explicitly approve deployment and any cost-bearing resources.
+- [x] Previously merged Jupiter/Pleiades relationship corrections retained.
+- [x] Public AI hard-disabled with generic 503; no key diagnostics or paid calls.
+- [x] Malformed storage recovery and failed note-save feedback.
+- [x] Journey-specific content, AI context reset and bounded history.
+- [x] APOD validation, Atlas/scale deep links, date edge cases and Atom links.
+- [x] Mobile navigation, modal focus/Escape/return, loading/error/empty states.
+- [x] Portable desktop/mobile browser tests, unit/API tests and GitHub Actions.
+- [x] Isolated streamed request limits and shared Redis admission/budget tests. This is not production AI integration.
+- [x] Targeted scientific corrections and complete catalog reference integrity tests.
+- [x] Deployment/rollback instructions, basic security headers, privacy disclosure, liveness and explicit indexing configuration prepared.
 
-## Suggested sequence
-1. Infrastructure discovery and default-off paid AI.
-2. Security and science correctness.
-3. Reliability fixes and mobile accessibility.
-4. Automated regression suite and CI.
-5. Preview deployment, validation, then founder-approved public release.
+## Required before public content release
 
-No deployment, secret access, live API test or paid resource creation was performed for this documentation audit.
+- [ ] Founder approves merges; stacked PRs are retargeted/rebased and resulting main passes every CI gate.
+- [ ] Host, project owner, public URL, runtime compatibility, free-plan eligibility, quotas and rollback are confirmed.
+- [ ] Exact release SHA has a successful install/typecheck/test/Redis/build/browser run; production dependency advisory check is reviewed.
+- [ ] Private preview is approved and tested on the selected hosting platform; headers, caching, external feeds and 404s behave correctly.
+- [ ] Screen-reader basics, keyboard, 200–400% zoom and narrow-screen use pass manual acceptance. No claim of WCAG certification.
+- [ ] Remaining scientific/editorial review in docs/SCIENTIFIC_REVIEW.md is completed for release content.
+- [ ] Mobile performance and slow-network behavior are measured; external media loading does not cause unacceptable layout shifts.
+- [ ] Correct SITE_URL and ALLOW_INDEXING are set before the release build; robots/sitemap/metadata are verified.
+- [ ] Actual hosting log retention, support/contact channel and monitoring owner are recorded; privacy text matches the deployment.
+- [ ] Rollback to a known good deployment is tested without deleting personal browser data.
+- [ ] Founder explicitly approves the concrete public deployment. Production smoke checks then pass.
+
+## Separate gates for any future paid AI activation
+
+- [ ] Trusted authenticated identity and controlled enrollment implemented on the actual host.
+- [ ] Shared rate/concurrency/budget storage durability, no-eviction behavior and fail-closed outages verified across instances.
+- [ ] Server-only provider key management, model allowlist, tokenizer/cost reservation, output cap, timeout and no-retry behavior verified.
+- [ ] Provider enforced spend limits, alerts, safety margin and emergency switches verified in the actual account.
+- [ ] Privacy/retention and abuse controls reviewed; no secret/prompt leakage in browser bundles or logs.
+- [ ] Explicit permission obtained for any paid validation call and separately for public AI activation.
+
+The founder's approximately $50 API credit is not an approved development budget. Content release can proceed with AI offline once its own gates pass.

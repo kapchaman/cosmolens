@@ -1,32 +1,27 @@
 # CosmoLens deployment audit — 2026-10-20
 
-## Evidence inspected
-- `package.json`: Next.js 16.3.8, React 19, Node-based build/start scripts; `playwright-core` visual smoke script.
-- `next.config.ts`: no hosting adapter; disables powered-by header; lucide import optimization.
-- `README.md`: documents local development and environment configuration; no confirmed live deployment URL.
-- `.env.example`: `OPENAI_API_KEY`, `OPENAI_MODEL`, `NASA_API_KEY` placeholders.
-- `.gitignore`: ignores local environment files.
-- Lookups for `vercel.json`, `netlify.toml`, `wrangler.toml`, and `.github/workflows/ci.yml` returned 404. This does not rule out dashboard-based deployments or differently named CI workflows.
+## Confirmed repository state
 
-## Conclusion
-**Hosting provider and live deployment status: UNKNOWN.** A Next.js application and an existing GitHub repository are not proof of a deployed service. No provider dashboard or DNS inspection was performed. No secrets were read or disclosed.
+Next.js 16.3.8, React 19, a committed npm lockfile and Node build/start commands. GitHub Actions verifies a production build, unit/API tests, Redis concurrency tests and Chromium desktop/mobile scenarios. Basic HTTP security headers, explicit indexing configuration and a minimal liveness route are included in the release-preparation branch. No provider-specific deployment adapter or confirmed production URL is present.
 
-## Manual verification
-1. In GitHub repository settings, check Environments, Actions and Deployments.
-2. In Vercel, Netlify and Cloudflare dashboards, search for the project and inspect linked repository, production URL, deployment history and environment names. Do not share secret values.
-3. If a public URL exists, verify which commit is deployed, production logs, API routing, and TLS.
-4. Check whether any domain DNS points to a deployment; do not infer ownership from a URL alone.
-5. Confirm whether the intended site will be personal/non-commercial or commercial before choosing free hosting terms.
+**Hosting provider and live deployment status remain unknown.** A repository and successful Actions run are not evidence of a public deployment. No provider dashboard, DNS ownership, secret values or billing account was inspected. Earlier audit findings about absent CI and unsafe active AI describe the pre-fix baseline, not the proposed release stack.
 
-## Hosting options
-| Option | Fit | Considerations |
+## Hosting options checked against current official documentation
+
+| Option | Fit for this project | Decision boundary |
 | --- | --- | --- |
-| Vercel | Natural Next.js workflow | Verify current free-plan commercial restrictions, function quotas, cost controls, and region limits in official documentation before use. |
-| Cloudflare | Strong edge ecosystem | Confirm Next.js compatibility for Node runtime, filesystem assumptions, and OpenAI route behavior; may require an adapter and architectural changes. |
-| Existing host | Potentially lowest migration effort | Cannot evaluate until identified. |
-| Self-managed VPS | Maximum control | Hosting cost, patching, backups, observability and operational burden make it unsuitable for a zero-budget first release. |
+| Existing compatible Next.js host | Least migration work if it exists | Confirm owner, deployed commit, TLS, logs, quotas and rollback first. |
+| Vercel Hobby | Straightforward Next.js operation for a personal non-commercial release | [Hobby terms](https://vercel.com/docs/plans/hobby) restrict use to personal/non-commercial projects. Product monetization may require a different plan; no paid upgrade is authorized. Quotas can pause features. |
+| Cloudflare Workers | Potential option after a compatibility proof | [Current Next.js guidance](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/) recommends vinext, which is in beta. Its API compatibility and runtime behavior need testing for this exact app. Do not migrate the production toolchain merely to meet a date. |
+| Static-only hosting | Free hosts may serve exported pages | Current API routes and dynamic comparison behavior make a static export an architectural change. It is not a drop-in deployment. |
+| Self-managed server | Works with Node | Requires an existing machine plus patching, TLS, backups and monitoring. Not the default for a zero-budget solo project. |
 
-**Conditional recommendation:** prefer an already functioning compatible host; otherwise evaluate Vercel first for ease of Next.js deployment, subject to verified terms and budget constraints. Do not create accounts or paid resources before approval.
+Recommendation: first identify any existing host. Otherwise evaluate a personal content release on a compatible free Next.js service, subject to its terms and quotas. Keep paid AI disabled. Hosting/provider configuration remains a founder decision after a concrete private validation plan; no accounts/resources were created.
 
-## Current status
-Repository-only review; no production dashboard access, runtime tests, deployment or API calls.
+## Required discovery before deployment
+
+1. Confirm existing GitHub Deployments/Environments and any connected provider dashboard. Record the production URL, owner, project and deployed commit without copying secret values.
+2. Confirm personal/non-commercial eligibility or select another permitted service; identify quota-exhaustion behavior and prevent automatic paid upgrades.
+3. Confirm the host can run the pinned Next.js/Node build, execute route handlers, reach public NASA/news feeds, and apply headers/cache semantics.
+4. Record private preview access, deployment approval, rollback and log retention. `noindex` is not access control.
+5. Use [the deployment runbook](docs/DEPLOYMENT.md) and [release gates](RELEASE_CHECKLIST.md) on the approved release commit.

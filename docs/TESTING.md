@@ -18,7 +18,9 @@ The browser package is pinned for reproducible downloads. If updating Playwright
 
 `typecheck` first runs `next typegen` so a clean checkout does not require an earlier dev/build run.
 
-Local verification on 2026-10-21: 42 unit/API tests and production build passed. The 16 browser cases were collected, but Chromium installation returned a “Site Unavailable” HTML response instead of a ZIP. Browser execution remains a required gate until CI or an unrestricted development environment runs it.
+Verification now covers 75 unit/API tests, six isolated Redis integration tests and 52 desktop/mobile browser cases. TypeScript and the production build also pass. GitHub Actions runs the complete suite; inspect the latest PR checks for evidence tied to the exact candidate commit.
+
+In the development workspace, Chromium installation returned a “Site Unavailable” HTML response instead of a ZIP. Browser and real Redis execution were therefore verified in GitHub Actions, not claimed as local successes. CI browser screenshots were also inspected for the responsive layout review.
 
 ## GitHub Actions
 

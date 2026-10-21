@@ -1,46 +1,54 @@
 # CosmoLens
 
-CosmoLens is a long-term interactive astronomy product: part cosmic atlas, part scientific visualization platform, part AI-assisted exploration system.
+An astronomy education platform built with Next.js 16, React 19, TypeScript, Tailwind CSS and Zod. Explore 33 curated objects, ten cosmic scales, comparisons, three guided journeys, conceptual visualizations, NASA imagery, observation guidance and a local personal journal.
 
-This repository starts with a clean Next.js foundation, a sourced astronomy data layer, an application shell, interactive exploration surfaces, contextual AI, and resilient external-data adapters.
+**Public AI is intentionally offline:** GET/POST `/api/ai` return 503. Adding an API key does not enable it. The protection foundation is isolated from the public route and uses fake providers in tests. No OpenAI account or credits are required for development.
 
 ## Development
 
+Use Node 24 (minimum supported: 22.12) and the committed npm lockfile.
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Copy `.env.example` to `.env.local` and add `OPENAI_API_KEY` before using CosmoLens AI.
+Environment variables are optional locally. `.env.example` documents `SITE_URL` and `ALLOW_INDEXING`; no keys are needed for the current NASA adapter. My Cosmos data stays in the current browser and is not a backup or cross-device account.
 
-Useful checks:
+## Verification
 
 ```bash
 npm run typecheck
+npm test
 npm run build
-npm run visual:smoke
+npx playwright install chromium
+npm run test:e2e
 ```
 
-## Product Principles
+Shared-admission tests additionally require an isolated local Redis:
 
-- Scientific claims must be sourced.
-- Estimates, observations, and theoretical values must be labeled distinctly.
-- AI is contextual and educational, not a generic chatbot.
-- Visualizations should clarify scale, evidence, or relationships.
-- Complex integrations should degrade gracefully.
+```bash
+TEST_REDIS_URL=redis://127.0.0.1:6379 npm run test:redis
+```
 
-## Current Phase
+GitHub Actions runs the complete suite, including an ephemeral Redis service and desktop/mobile Chromium. See [testing details](docs/TESTING.md). Browser tests mock public data feeds and do not call paid AI.
 
-CosmoLens is currently in an MVP-plus foundation stage:
+## Product boundaries
 
-- Phase 0: clean project setup is complete.
-- Phase 1: application shell and design foundation are complete enough for iteration.
-- Phase 2: sourced astronomical atlas is in progress with 33 curated entries.
-- Phase 3: object pages include visual object headers, measurements, relationships, sources, scientific profiles, cosmic-scale context, and save actions.
-- Phase 4: Cosmic Scale Explorer exists as a polished 2.5D MVP with linked catalog entries, order-of-magnitude context, and keyboard navigation.
-- Phase 5: CosmoLens AI is server-side, context-aware, rate-limited, and requires a valid `OPENAI_API_KEY`.
-- Phase 6: conceptual scientific visualizations cover rotation curves, lensing, Hubble diagrams, and HR diagrams.
-- Phase 7: guided journeys have dedicated pages with step visualizations and AI research context.
-- Phase 8: NASA APOD is integrated through a resilient server adapter with fallback behavior.
-- Phase 9: My Cosmos exists as a local-first personal journal and saved-object space.
-- Phase 10: performance, accessibility, and visual smoke checks are active but need continuing polish as features expand.
+- Scientific observations, estimates and models have distinct labels; source presence alone is not proof of factual accuracy.
+- Graphs and scale scenes are educational illustrations, not measured datasets or precision simulations.
+- Observation Planner provides seasonal guidance and approximate lunar phase, not real-time ephemerides.
+- External NASA/news failures have explicit fallbacks.
+- No public deployment or paid resource is authorized by a successful build.
+
+## Project documentation
+
+- [Development plan and November 13 milestone](docs/DEVELOPMENT_PLAN.md)
+- [Scientific review and remaining editorial work](docs/SCIENTIFIC_REVIEW.md)
+- [UX review](docs/UX_REVIEW.md)
+- [AI security architecture and activation gates](SECURITY_ARCHITECTURE.md)
+- [Hosting audit](DEPLOYMENT_AUDIT.md)
+- [Deployment and rollback runbook](docs/DEPLOYMENT.md)
+- [Release checklist](RELEASE_CHECKLIST.md)
+
+The review branches are intentionally stacked. Review in PR order and retarget/rebase each successor after an approved merge, especially if squash merging. Never merge or deploy automatically.

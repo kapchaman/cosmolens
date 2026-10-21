@@ -1,4 +1,4 @@
-# Development audit and plan — 2026-10-21
+# Development audit and plan — 2026-10-20
 
 Baseline: `main` at `cdd964461b50b7841b253bfcbc0cc1bdfc2d0a89`.
 PRs #1 (release/security docs), #2 (relationships) and #3 (AI containment) are merged. Do not redo the Jupiter/Pleiades relationship correction or enable AI to “fix” its intentional 503.
@@ -41,3 +41,14 @@ AI is not required for the first public release. A zero-budget content release w
 - Source presence is not factual verification; review quantitative claims against the actual sources.
 - localStorage remains local and is not a backup; concurrent multi-tab writes are not transactional.
 - No merge, public deployment, paid service, key rotation/disclosure or OpenAI spending is authorized.
+
+## Progress at the end of the implementation pass
+
+- PR #4: all ten reliability regressions fixed and covered.
+- PR #5: CI and portable browser verification.
+- PR #6: mobile/keyboard improvements, browser regressions and screenshot review.
+- PR #7: isolated AI protection foundation; real Redis race tests pass; public route stays disabled.
+- PR #8: sourced scientific corrections and catalog integrity; remaining editorial scope is explicit.
+- PR #9: indexing, privacy, headers, health and current deployment/runbook documentation.
+
+PRs are stacked and no changes have been merged to main. The critical remaining work for November 13 is review/merge, host identification, manual accessibility/science checks and an approved deployment rehearsal. Full authenticated AI integration is a separate project gate and should not consume the content release's remaining time unless its prerequisites become available.
