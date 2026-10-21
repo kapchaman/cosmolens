@@ -17,13 +17,14 @@ export function RotationCurveMini() {
         <div>
           <div className="eyebrow">Scientific Phenomenon</div>
           <h2 className="mt-2 text-2xl font-semibold">Galaxy rotation curve</h2>
+          <p className="mt-2 text-sm text-[color:var(--muted)]">Schematic curves illustrating a common observed pattern, not measurements of a particular galaxy.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="button button-ghost min-h-9 px-3 text-sm" type="button" onClick={() => setShowVisible((value) => !value)}>
+          <button className="button button-ghost min-h-9 px-3 text-sm" type="button" aria-pressed={showVisible} onClick={() => setShowVisible((value) => !value)}>
             {showVisible ? <Eye aria-hidden="true" size={15} /> : <EyeOff aria-hidden="true" size={15} />}
             Visible matter
           </button>
-          <button className="button button-ghost min-h-9 px-3 text-sm" type="button" onClick={() => setShowModel((value) => !value)}>
+          <button className="button button-ghost min-h-9 px-3 text-sm" type="button" aria-pressed={showModel} onClick={() => setShowModel((value) => !value)}>
             {showModel ? <Eye aria-hidden="true" size={15} /> : <EyeOff aria-hidden="true" size={15} />}
             Dark matter model
           </button>

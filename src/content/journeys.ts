@@ -3,6 +3,7 @@ import type { GuidedJourney } from "@/types/astronomy";
 export const journeys: GuidedJourney[] = [
   {
     id: "dark-matter-evidence",
+    sourceIds: ["nasa-dark-matter", "nasa-bullet-cluster-webb"],
     conclusion: { title: "Independent evidence matters.", body: "Orbital motion and gravitational lensing provide independent ways to infer mass. In merging clusters, lensing maps can be offset from the X-ray-emitting gas. Together these observations support dark matter, but they do not identify its particle nature." },
     atlasQuery: "dark matter",
     comparison: { left: "bullet-cluster", right: "virgo-cluster" },
@@ -36,6 +37,7 @@ export const journeys: GuidedJourney[] = [
   },
   {
     id: "life-of-a-star",
+    sourceIds: ["nasa-stellar-evolution", "nasa-sun-fact-sheet"],
     conclusion: { title: "A star’s mass shapes its evolution.", body: "Stars form in collapsing gas clouds and spend their main-sequence lives fusing hydrogen. Their later evolution depends strongly on mass: a Sun-like star leaves a white dwarf, while massive stars can undergo core collapse. An HR diagram compares stellar properties; it is not a single life track followed by every star." },
     atlasQuery: "star",
     comparison: { left: "sun", right: "betelgeuse" },
@@ -53,7 +55,7 @@ export const journeys: GuidedJourney[] = [
       {
         id: "main-sequence",
         title: "Long nuclear balance",
-        summary: "Stars spend most of their lives balancing gravity and fusion pressure.",
+        summary: "During the main sequence, pressure gradients support a star against gravity while core hydrogen fusion supplies energy.",
         objectIds: ["sun", "proxima-centauri"],
         visualization: "hr-diagram",
       },
@@ -67,6 +69,7 @@ export const journeys: GuidedJourney[] = [
   },
   {
     id: "universe-expansion",
+    sourceIds: ["nasa-cosmological-redshift"],
     conclusion: { title: "Expansion emerges on large scales.", body: "The large-scale distance–redshift trend supports an expanding universe. Local gravitational motion can dominate nearby, so Andromeda approaching the Milky Way is not a contradiction. Measuring expansion history requires calibrated distances and models, not a straight line alone." },
     atlasQuery: "galaxy",
     comparison: { left: "andromeda", right: "milky-way" },

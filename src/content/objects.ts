@@ -15,7 +15,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Mercury helps constrain models of terrestrial planet formation close to a star and the evolution of airless rocky bodies.",
     measurements: [
-      { label: "Diameter", value: "4,879", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "4,879", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "0.330 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "57.9", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -39,7 +39,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Venus is essential for studying climate feedback, planetary habitability, and divergent evolution among Earth-sized worlds.",
     measurements: [
-      { label: "Diameter", value: "12,104", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "12,104", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "4.87 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "108.2", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -63,7 +63,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Earth is the reference point for habitability, planetary atmospheres, climate dynamics, and comparative planetology.",
     measurements: [
-      { label: "Diameter", value: "12,756", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "12,756", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "5.97 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "149.6", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -88,7 +88,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "The Moon anchors lunar chronology, helps test impact history models, and remains a key target for human and robotic exploration.",
     measurements: [
-      { label: "Diameter", value: "3,475", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "3,475", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "0.073 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Earth", value: "0.384", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -112,7 +112,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Mars is a major target for understanding planetary habitability, climate loss, and whether life could have emerged beyond Earth.",
     measurements: [
-      { label: "Diameter", value: "6,792", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "6,792", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "0.642 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "228.0", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -136,7 +136,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Jupiter preserves clues about Solar System formation and strongly shapes the orbital architecture of smaller bodies.",
     measurements: [
-      { label: "Diameter", value: "142,984", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "142,984", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "1,898 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "778.5", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -163,7 +163,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Saturn connects planetary atmospheres, ring physics, and ocean-world astrobiology through moons such as Titan and Enceladus.",
     measurements: [
-      { label: "Diameter", value: "120,536", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
+      { label: "Equatorial diameter", value: "120,536", unit: "km", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mass", value: "568 x 10^24", unit: "kg", confidence: "measured", sourceIds: [planetarySource] },
       { label: "Mean distance from Sun", value: "1,432.0", unit: "million km", confidence: "measured", sourceIds: [planetarySource] },
     ],
@@ -189,8 +189,8 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Uranus is central to understanding ice giant interiors, tilted magnetospheres, seasonal extremes, and a common class of planets around other stars.",
     measurements: [
-      { label: "Equatorial radius", value: "25,559", unit: "km", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
-      { label: "Mean distance from Sun", value: "2.871", unit: "billion km", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
+      { label: "Equatorial radius", value: "25,559", unit: "km", confidence: "measured", sourceIds: ["nasa-uranus-fact-sheet"] },
+      { label: "Mean distance from Sun", value: "2.867", unit: "billion km", confidence: "measured", sourceIds: ["nasa-uranus-fact-sheet"], note: "Rounded semimajor axis from the NASA fact sheet." },
       { label: "Magnetic axis tilt", value: "nearly 60", unit: "degrees", confidence: "measured", sourceIds: ["nasa-uranus-facts"] },
     ],
     composition: ["hydrogen", "helium", "water/ammonia/methane ices", "rocky material"],
@@ -237,7 +237,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Europa connects orbital tides, ocean-world habitability, surface chemistry, and mission-driven exploration through NASA's Europa Clipper.",
     measurements: [
-      { label: "Diameter", value: "3,100", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
+      { label: "Equatorial diameter", value: "3,122", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
       { label: "Orbital distance from Jupiter", value: "671,000", unit: "km", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
       { label: "Orbital period", value: "3.55", unit: "Earth days", confidence: "measured", sourceIds: ["jpl-europa-clipper-quick-facts"] },
     ],
@@ -311,7 +311,7 @@ export const objects: AstronomicalObject[] = [
       "Enceladus is one of the most compelling astrobiology targets because spacecraft have directly sampled material from an ocean-world plume.",
     measurements: [
       { label: "Diameter", value: "about 500", unit: "km", confidence: "estimate", sourceIds: ["nasa-enceladus-cassini"] },
-      { label: "Ocean evidence", value: "global subsurface saltwater ocean", confidence: "measured", sourceIds: ["nasa-enceladus-cassini"] },
+      { label: "Ocean evidence", value: "global subsurface saltwater ocean", confidence: "modeled", sourceIds: ["nasa-enceladus-cassini"], note: "Inferred from Cassini gravity, libration and plume measurements; the ocean interior was not directly imaged." },
     ],
     composition: ["water ice", "salty ocean", "rocky core", "organic compounds"],
     sourceIds: ["nasa-enceladus-cassini"],
@@ -586,7 +586,7 @@ export const objects: AstronomicalObject[] = [
     measurements: [
       { label: "Nebula span", value: "70 by 55", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
       { label: "Pillars height", value: "roughly 4 to 5", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
-      { label: "Distance", value: "about 5,700", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"] },
+      { label: "Distance", value: "about 7,000", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-eagle-nebula-m16"], note: "Approximate distance adopted in the cited Hubble catalog; the physical span on this page uses that same source." },
     ],
     composition: ["hydrogen gas", "dust", "young stars"],
     sourceIds: ["nasa-eagle-nebula-m16"],
@@ -686,7 +686,7 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "M87* provides a direct observational testbed for black hole imaging, jet launching, and general relativity in the strong-field regime.",
     measurements: [
-      { label: "Mass", value: "6.5 +/- 0.7 x 10^9", unit: "solar masses", confidence: "measured", sourceIds: ["eht-m87-paper"] },
+      { label: "Mass", value: "6.5 x 10^9", unit: "solar masses", confidence: "modeled", sourceIds: ["eht-m87-paper"], note: "2019 EHT inference: ±0.2 billion statistical and ±0.7 billion systematic uncertainty, using emission models and an adopted distance." },
       { label: "Galaxy distance", value: "54 million", unit: "light-years", confidence: "estimate", sourceIds: ["nasa-m87-hubble-catalog"] },
     ],
     composition: ["black hole", "accretion flow", "relativistic jet environment"],
@@ -711,8 +711,8 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Cygnus X-1 is historically important for black hole astronomy and remains a benchmark system for studying accretion, massive stars, and stellar-mass black hole formation.",
     measurements: [
-      { label: "Black hole mass", value: "about 21", unit: "solar masses", confidence: "modeled", sourceIds: ["cygnus-x1-mass-paper"] },
-      { label: "Distance", value: "2.22", unit: "kiloparsecs", confidence: "measured", sourceIds: ["cygnus-x1-mass-paper"] },
+      { label: "Black hole mass", value: "21.2 +/- 2.2", unit: "solar masses", confidence: "modeled", sourceIds: ["cygnus-x1-mass-paper"], note: "2021 inference combining radio astrometry and optical binary data." },
+      { label: "Distance", value: "2.22 (+0.18 / -0.17)", unit: "kiloparsecs", confidence: "measured", sourceIds: ["cygnus-x1-mass-paper"] },
       { label: "System type", value: "high-mass X-ray binary", confidence: "measured", sourceIds: ["cygnus-x1-mass-paper"] },
     ],
     composition: ["black hole", "massive companion star", "accretion flow"],
@@ -805,10 +805,10 @@ export const objects: AstronomicalObject[] = [
     scientificSignificance:
       "Dark matter is one of the central unsolved problems in astrophysics. Current observations strongly constrain its gravitational role but not its particle identity.",
     measurements: [
-      { label: "Status", value: "inferred, not directly identified", confidence: "contextual", sourceIds: ["nasa-bullet-cluster-webb"] },
+      { label: "Status", value: "inferred, not directly identified", confidence: "contextual", sourceIds: ["nasa-dark-matter", "nasa-bullet-cluster-webb"] },
     ],
     composition: ["unknown"],
-    sourceIds: ["nasa-bullet-cluster-webb"],
+    sourceIds: ["nasa-dark-matter", "nasa-bullet-cluster-webb"],
     relationships: [
       { targetId: "bullet-cluster", kind: "associated-with" },
       { targetId: "milky-way", kind: "associated-with" },

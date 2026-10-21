@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Crosshair } from "lucide-react";
 
 const stars = [
-  { id: "rigel", name: "Rigel", x: 84, y: 44, color: "#91b9ff", type: "blue supergiant" },
-  { id: "sirius", name: "Sirius", x: 68, y: 92, color: "#e9f2ff", type: "main sequence" },
+  { id: "rigel", name: "Rigel", x: 68, y: 44, color: "#91b9ff", type: "blue supergiant" },
+  { id: "sirius", name: "Sirius A", x: 120, y: 92, color: "#e9f2ff", type: "main sequence" },
   { id: "sun", name: "Sun", x: 214, y: 132, color: "#f0c36f", type: "main sequence" },
-  { id: "proxima", name: "Proxima Centauri", x: 372, y: 176, color: "#d87666", type: "red dwarf" },
-  { id: "betelgeuse", name: "Betelgeuse", x: 410, y: 54, color: "#e48863", type: "red supergiant" },
+  { id: "proxima", name: "Proxima Centauri", x: 430, y: 176, color: "#d87666", type: "red dwarf" },
+  { id: "betelgeuse", name: "Betelgeuse", x: 390, y: 54, color: "#e48863", type: "red supergiant" },
 ];
 
 export function HRDiagramMini() {

@@ -143,7 +143,7 @@ function CosmicScaleContent({
             <div className="absolute bottom-5 left-5 right-5 grid gap-3 sm:grid-cols-3">
               <div className="quiet-panel p-3">
                 <Ruler aria-hidden="true" size={15} color="var(--accent)" />
-                <div className="mt-2 text-xs text-[color:var(--muted)]">order of magnitude</div>
+                <div className="mt-2 text-xs text-[color:var(--muted)]">reference scale</div>
                 <div className="mt-1 font-mono text-sm">{formatPowerOfTen(active.approximateSizeMeters)}</div>
               </div>
               <div className="quiet-panel p-3">
@@ -167,6 +167,7 @@ function CosmicScaleContent({
               <h3 className="mt-4 text-3xl font-semibold">{active.title}</h3>
               <p className="mt-2 text-[color:var(--muted)]">{active.subtitle}</p>
               <p className="mt-6 text-base text-[color:var(--muted)]">{active.context}</p>
+              <p className="mt-3 text-sm text-[color:var(--muted)]">{active.sizeDescription} Illustration is schematic.</p>
               {activeObjects.length ? (
                 <div className="mt-5">
                   <div className="tiny-label">Explore this scale</div>

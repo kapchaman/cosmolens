@@ -6,7 +6,7 @@ import { GravitationalLensingMini } from "@/components/visualizations/Gravitatio
 import { HRDiagramMini } from "@/components/visualizations/HRDiagramMini";
 import { HubbleDiagramMini } from "@/components/visualizations/HubbleDiagramMini";
 import { RotationCurveMini } from "@/components/visualizations/RotationCurveMini";
-import { getJourneyById, getJourneys, getObjectById } from "@/lib/astronomy/catalog";
+import { getJourneyById, getJourneys, getObjectById, getSourceById } from "@/lib/astronomy/catalog";
 import type { GuidedJourneyStep } from "@/types/astronomy";
 
 type JourneyPageProps = {
@@ -76,6 +76,10 @@ export default async function JourneyPage({ params }: JourneyPageProps) {
             <div className="eyebrow">Guided Exploration</div>
             <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">{journey.title}</h1>
             <p className="mt-5 max-w-3xl text-lg text-[color:var(--muted)]">{journey.summary}</p>
+            <div className="mt-4 text-sm text-[color:var(--muted)]">
+              <span className="font-semibold">Scientific sources</span>
+              <ul className="mt-2 list-disc space-y-2 pl-5">{journey.sourceIds.map((id) => { const source = getSourceById(id); return source ? <li key={id}><a href={source.url} target="_blank" rel="noreferrer" className="underline">{source.title} — {source.organization}</a></li> : null; })}</ul>
+            </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/journeys" className="button button-ghost">
                 All journeys
