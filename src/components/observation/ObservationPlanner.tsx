@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { approximateMoonPhase, localDateInput, parseCalendarDate } from "@/lib/astronomy/dates";
+import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Eye, MapPin, Moon, ShieldCheck, Telescope } from "lucide-react";
 import type { LatitudeBand, ObservationDifficulty, ObservationTarget } from "@/types/observation";
 
@@ -11,32 +12,6 @@ const difficultyLabel: Record<ObservationDifficulty, string> = {
   "dark-sky": "dark sky",
 };
 
-function todayInputValue() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function monthFromInput(value: string) {
-  const date = new Date(`${value}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? new Date().getMonth() + 1 : date.getMonth() + 1;
-}
-
-function approximateMoonPhase(value: string) {
-  const date = new Date(`${value}T00:00:00Z`);
-  const referenceNewMoon = Date.UTC(2000, 0, 6, 18, 14);
-  const lunarCycle = 29.530588853;
-  const days = (date.getTime() - referenceNewMoon) / 86_400_000;
-  const age = ((days % lunarCycle) + lunarCycle) % lunarCycle;
-
-  if (age < 1.8 || age > 27.7) return { label: "new moon window", age };
-  if (age < 6.8) return { label: "waxing crescent", age };
-  if (age < 9.8) return { label: "first quarter", age };
-  if (age < 13.8) return { label: "waxing gibbous", age };
-  if (age < 16.8) return { label: "full moon window", age };
-  if (age < 21.8) return { label: "waning gibbous", age };
-  if (age < 24.8) return { label: "last quarter", age };
-  return { label: "waning crescent", age };
-}
-
 function scoreTarget(target: ObservationTarget, sky: string) {
   if (target.difficulty === "easy") return 3;
   if (target.difficulty === "moderate") return sky === "urban" ? 1 : 2;
@@ -44,10 +19,11 @@ function scoreTarget(target: ObservationTarget, sky: string) {
 }
 
 export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }) {
-  const [date, setDate] = useState(todayInputValue());
+  const [date, setDate] = useState("");
+  useEffect(() => setDate(localDateInput()), []);
   const [latitudeBand, setLatitudeBand] = useState<LatitudeBand>("north");
   const [sky, setSky] = useState("suburban");
-  const month = monthFromInput(date);
+  const month = parseCalendarDate(date)?.getUTCMonth();
   const moonPhase = useMemo(() => approximateMoonPhase(date), [date]);
 
   const seasonalTargets = useMemo(
@@ -55,11 +31,11 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
       targets
         .filter((target) => !target.ephemerisRequired)
         .filter((target) => target.latitudeBands.includes(latitudeBand))
-        .filter((target) => target.bestMonths.includes(month))
+        .filter((target) => month !== undefined && moonPhase !== null && target.bestMonths.includes(month + 1))
         .map((target) => ({ ...target, score: scoreTarget(target, sky) }))
         .filter((target) => target.score > 0)
         .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name)),
-    [date, latitudeBand, month, sky, targets],
+    [latitudeBand, month, moonPhase, sky, targets],
   );
 
   const ephemerisTargets = targets.filter((target) => target.ephemerisRequired);
@@ -81,6 +57,10 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
             <input
               className="min-h-11 rounded-md border border-[color:var(--border)] bg-black/20 px-3 outline-none"
               type="date"
+              min="1900-01-01"
+              max="2100-12-31"
+              aria-invalid={!moonPhase}
+              aria-describedby="observation-date-help"
               value={date}
               onChange={(event) => setDate(event.target.value)}
             />
@@ -125,8 +105,9 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
             <span className="font-semibold">Approximate Moon phase</span>
           </div>
           <p className="mt-2 text-sm text-[color:var(--muted)]">
-            {moonPhase.label}, lunar age ~{moonPhase.age.toFixed(1)} days.
+            {moonPhase ? `${moonPhase.label}, lunar age ~${moonPhase.age.toFixed(1)} days.` : "Choose a valid date between 1900 and 2100."}
           </p>
+          <p id="observation-date-help" className="mt-2 text-xs text-[color:var(--muted)]" role="status">{moonPhase ? "Rough estimate at UTC midnight, not an observing ephemeris. Your initial date uses this device’s local calendar." : "A valid date is needed for seasonal suggestions and Moon phase."}</p>
         </div>
 
         <div className="mt-5 quiet-panel p-4">

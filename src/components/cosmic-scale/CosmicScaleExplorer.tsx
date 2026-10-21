@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { updateQuery } from "@/lib/navigation";
 import { ArrowLeft, ArrowRight, Database, Maximize2, Ruler } from "lucide-react";
 import type { AstronomicalObject, CosmicScaleNode } from "@/types/astronomy";
 import { formatConfidence } from "@/lib/astronomy/format";
@@ -75,14 +77,16 @@ function VisualSystem({ mode, order }: { mode: CosmicScaleNode["visualMode"]; or
   );
 }
 
-export function CosmicScaleExplorer({
+function CosmicScaleContent({
   nodes,
   objects = [],
 }: {
   nodes: CosmicScaleNode[];
   objects?: ScaleObjectSummary[];
 }) {
-  const [index, setIndex] = useState(0);
+  const params = useSearchParams();
+  const index = Math.max(0, nodes.findIndex((node) => node.id === params.get("scale")));
+  const setIndex = (next: number) => updateQuery({ scale: nodes[Math.max(0, Math.min(nodes.length - 1, next))].id });
   const active = nodes[index];
   const progress = useMemo(() => ((index + 1) / nodes.length) * 100, [index, nodes.length]);
   const objectById = useMemo(() => new Map(objects.map((object) => [object.id, object])), [objects]);
@@ -90,27 +94,15 @@ export function CosmicScaleExplorer({
   const previousNode = index > 0 ? nodes[index - 1] : null;
   const scaleJump = previousNode ? active.approximateSizeMeters / previousNode.approximateSizeMeters : null;
 
-  useEffect(() => {
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      if (event.key === "ArrowRight") {
-        setIndex((value) => Math.min(nodes.length - 1, value + 1));
-      }
-
-      if (event.key === "ArrowLeft") {
-        setIndex((value) => Math.max(0, value - 1));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeydown);
-    return () => window.removeEventListener("keydown", handleKeydown);
-  }, [nodes.length]);
 
   return (
-    <section className="section" id="cosmic-scale">
+    <section className="section" id="cosmic-scale" aria-label="Cosmic Scale Explorer" onKeyDown={(event) => {
+      if (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true]")) return;
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        setIndex(index + (event.key === "ArrowRight" ? 1 : -1));
+      }
+    }}>
       <div className="app-container">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
@@ -125,7 +117,7 @@ export function CosmicScaleExplorer({
               type="button"
               aria-label="Previous scale"
               disabled={index === 0}
-              onClick={() => setIndex((value) => Math.max(0, value - 1))}
+              onClick={() => setIndex(index - 1)}
             >
               <ArrowLeft aria-hidden="true" size={17} />
             </button>
@@ -134,7 +126,7 @@ export function CosmicScaleExplorer({
               type="button"
               aria-label="Next scale"
               disabled={index === nodes.length - 1}
-              onClick={() => setIndex((value) => Math.min(nodes.length - 1, value + 1))}
+              onClick={() => setIndex(index + 1)}
             >
               <ArrowRight aria-hidden="true" size={17} />
             </button>
@@ -216,6 +208,7 @@ export function CosmicScaleExplorer({
                 min={0}
                 max={nodes.length - 1}
                 value={index}
+                aria-valuetext={active.title}
                 onChange={(event) => setIndex(Number(event.target.value))}
               />
               <div className="mt-3 h-1 rounded-full bg-white/10">
@@ -231,6 +224,7 @@ export function CosmicScaleExplorer({
                         : "border-[color:var(--border)] bg-transparent"
                     }`}
                     type="button"
+                    aria-pressed={nodeIndex === index}
                     onClick={() => setIndex(nodeIndex)}
                   >
                     {node.title}
@@ -243,4 +237,9 @@ export function CosmicScaleExplorer({
       </div>
     </section>
   );
+}
+
+export function CosmicScaleExplorer(props: { nodes: CosmicScaleNode[]; objects?: ScaleObjectSummary[] }) {
+  if (!props.nodes.length) return <p role="status">No scale entries are available.</p>;
+  return <Suspense fallback={<section id="cosmic-scale" className="section app-container" role="status">Loading cosmic scale…</section>}><CosmicScaleContent {...props} /></Suspense>;
 }

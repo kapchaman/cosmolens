@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { updateQuery } from "@/lib/navigation";
 import { Database, Filter, Search, Sparkles } from "lucide-react";
 import type { AstronomicalObject, ObjectCategory } from "@/types/astronomy";
 import { formatCategory } from "@/lib/astronomy/format";
@@ -19,8 +21,14 @@ const categories: Array<"all" | ObjectCategory> = [
 ];
 
 export function AtlasBrowser({ objects }: { objects: AstronomicalObject[] }) {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<(typeof categories)[number]>("all");
+  return <Suspense fallback={<p role="status">Loading atlas filters…</p>}><AtlasBrowserContent objects={objects} /></Suspense>;
+}
+
+function AtlasBrowserContent({ objects }: { objects: AstronomicalObject[] }) {
+  const params = useSearchParams();
+  const query = params.get("query") || "";
+  const candidate = params.get("category");
+  const category = categories.find((item) => item === candidate) || "all";
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -82,7 +90,7 @@ export function AtlasBrowser({ objects }: { objects: AstronomicalObject[] }) {
             <span className="sr-only">Search atlas</span>
             <input
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => updateQuery({ query: event.target.value })}
               className="w-full bg-transparent outline-none placeholder:text-[color:var(--muted-strong)]"
               placeholder="Search objects, concepts, phenomena..."
             />
@@ -94,7 +102,8 @@ export function AtlasBrowser({ objects }: { objects: AstronomicalObject[] }) {
                 key={item}
                 className={`button min-h-10 whitespace-nowrap px-3 ${category === item ? "button-primary" : "button-ghost"}`}
                 type="button"
-                onClick={() => setCategory(item)}
+                aria-pressed={category === item}
+                onClick={() => updateQuery({ category: item === "all" ? null : item }, true)}
               >
                 {item === "all" ? "All" : formatCategory(item)}
                 <span className="rounded-full border border-current/20 px-1.5 text-xs opacity-70">

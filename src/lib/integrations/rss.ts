@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "@/lib/integrations/url";
 import { htmlToPlainText, truncateText } from "@/lib/integrations/text";
 import type { AstronomyNewsItem, NewsSourceId } from "@/types/integrations";
 
@@ -37,14 +38,21 @@ function readTag(xml: string, tag: string) {
   return htmlToPlainText(match?.[1]);
 }
 
-function readLink(xml: string) {
-  const atomLink = xml.match(/<link\b[^>]*href=["']([^"']+)["'][^>]*>/i)?.[1];
-
-  if (atomLink) {
-    return htmlToPlainText(atomLink);
+function readLink(xml: string, base: string) {
+  // Attribute order, quote style and omitted rel are all valid in Atom.
+  // Prefer the HTML alternate, never the self/enclosure/edit endpoint.
+  const links = [...xml.matchAll(/<(?:atom:)?link\b[^>]*>/gi)].map(([tag]) => {
+    const attributes = Object.fromEntries([...tag.matchAll(/([\w:-]+)\s*=\s*(["'])(.*?)\2/g)]
+      .map((match) => [match[1].toLowerCase(), htmlToPlainText(match[3])]));
+    return attributes;
+  }).filter((link) => link.href && (!link.rel || link.rel === "alternate")
+    && (!link.type || ["text/html", "application/xhtml+xml"].includes(link.type)));
+  links.sort((a, b) => Number(Boolean(b.type)) - Number(Boolean(a.type)));
+  for (const link of links) {
+    const url = safeHttpUrl(link.href, base);
+    if (url) return url;
   }
-
-  return readTag(xml, "link");
+  return safeHttpUrl(readTag(xml, "link"), base) || "";
 }
 
 function extractBlocks(xml: string) {
@@ -73,7 +81,7 @@ export function parseFeedItems(xml: string, source: FeedSource): AstronomyNewsIt
     .map((block, index) => {
       const title = readTag(block, "title");
       const summary = readTag(block, "description") || readTag(block, "summary") || readTag(block, "content:encoded");
-      const url = readLink(block);
+      const url = readLink(block, source.url);
       const publishedAt = parseDate(readTag(block, "pubDate") || readTag(block, "updated") || readTag(block, "published"));
       const id = readTag(block, "guid") || url || `${source.id}-${index}`;
 

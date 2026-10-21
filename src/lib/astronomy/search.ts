@@ -53,7 +53,7 @@ export function globalSearch(query: string): SearchResult[] {
       title: node.title,
       eyebrow: "Cosmic scale",
       summary: node.context,
-      href: "/#cosmic-scale",
+      href: `/?scale=${encodeURIComponent(node.id)}#cosmic-scale`,
       score,
     };
   });

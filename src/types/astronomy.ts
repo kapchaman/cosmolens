@@ -109,4 +109,8 @@ export type GuidedJourney = {
   summary: string;
   status: "mvp" | "planned";
   steps: GuidedJourneyStep[];
+  conclusion: { title: string; body: string };
+  atlasQuery: string;
+  comparison: { left: string; right: string };
+  suggestedQuestion: string;
 };

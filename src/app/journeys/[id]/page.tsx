@@ -80,8 +80,8 @@ export default async function JourneyPage({ params }: JourneyPageProps) {
               <Link href="/journeys" className="button button-ghost">
                 All journeys
               </Link>
-              <Link href="/compare?left=bullet-cluster&right=virgo-cluster" className="button button-primary">
-                Compare evidence objects
+              <Link href={`/compare?left=${journey.comparison.left}&right=${journey.comparison.right}`} className="button button-primary">
+                Compare related objects
               </Link>
             </div>
           </div>
@@ -154,11 +154,11 @@ export default async function JourneyPage({ params }: JourneyPageProps) {
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_420px]">
           <div className="panel p-6">
             <div className="eyebrow">What This Journey Teaches</div>
-            <h2 className="mt-2 text-3xl font-semibold">Independent evidence matters.</h2>
+            <h2 className="mt-2 text-3xl font-semibold">{journey.conclusion.title}</h2>
             <p className="mt-4 text-[color:var(--muted)]">
-              A strong astrophysical explanation should not rest on one beautiful image or one surprising graph. Dark matter becomes compelling because several independent observations point toward missing gravitating mass.
+              {journey.conclusion.body}
             </p>
-            <Link href="/atlas?query=dark%20matter" className="button button-ghost mt-6">
+            <Link href={`/atlas?query=${encodeURIComponent(journey.atlasQuery)}`} className="button button-ghost mt-6">
               Continue in atlas
               <ArrowRight aria-hidden="true" size={16} />
             </Link>
@@ -167,7 +167,7 @@ export default async function JourneyPage({ params }: JourneyPageProps) {
           <AssistantPanel
             objectId={firstStepObject?.id}
             initialMode="research"
-            suggestedQuestion={`Guide me through the evidence in "${journey.title}" without overstating what dark matter is made of.`}
+            suggestedQuestion={journey.suggestedQuestion}
           />
         </div>
       </div>
