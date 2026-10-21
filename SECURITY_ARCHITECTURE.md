@@ -1,30 +1,45 @@
-# CosmoLens AI security architecture — proposal
+# CosmoLens AI security architecture
 
-## Verified implementation observations
-- `src/app/api/ai/route.ts` is a public Node runtime route using a server-side `OPENAI_API_KEY`.
-- The limiter key is taken from the first client-supplied `x-forwarded-for` value, with fallback to `local`.
-- `src/lib/ai/rate-limit.ts` stores counters in a process-local Map (12 requests per 60 seconds by default); counters are not shared between instances and entries are not purged.
-- The route parses `request.json()` before Zod validation, with no application-level raw body size cap.
-- A public GET response reveals key fingerprint, key-like status, and model identifier.
-- The upstream request sets `max_output_tokens: 900`, a 20-second abort, and `store: false`; these do not constitute a financial cap.
-- `.env.example` contains placeholders only; actual runtime secrets and billing settings were not inspected.
+Reviewed 2026-10-20. Public AI is deliberately disabled. GET and POST `/api/ai` return a generic HTTP 503 with `Cache-Control: no-store`. No environment flag or API key enables the route. No OpenAI request is made by the application or tests.
 
-## Threat model
-Anonymous callers can invoke a paid upstream model. Threats include automated requests, header spoofing, distributed clients, excessive payloads, concurrency races, accidental billing, service exhaustion and disclosure of diagnostic metadata.
+## Implemented, isolated foundation
 
-## Required controls before public paid AI
-1. **Default-off AI:** use `AI_PUBLIC_ENABLED=false` until protections and deployment are verified. A server-side emergency kill switch must be checked before upstream calls. Disable the route if prerequisites are absent.
-2. **Trusted identity:** do not use raw `x-forwarded-for`. Determine trusted client IP only through documented, validated hosting-proxy semantics; otherwise require a server-issued, abuse-resistant session or authenticated identity. Neither IP nor anonymous session is sufficient alone against distributed abuse.
-3. **Distributed throttling:** atomic counters with TTL in shared persistent infrastructure. Separate per-identity, per-session, and global limits; fail closed if limiter is unavailable. Avoid permanent in-memory maps.
-4. **Bound request processing:** reject excessive Content-Length when provided, but also cap actual streamed bytes before JSON parsing; return 413. Strict schema validation, field length limits and short context/history windows.
-5. **Global spend guard:** reserve conservative estimated cost or tokens atomically before sending a request, bound concurrency, reconcile actual usage when available, and stop at a configured project budget. Account for in-flight requests, retries and estimation errors. **Application-side accounting alone is not a guaranteed hard monetary ceiling.** Configure available provider-side project budgets/alerts/limits and monitor usage separately; verify actual enforcement semantics.
-6. **Upstream safety:** enforce model allowlist, request timeout, output token cap, retries with tight limits, and generic client errors. Never log secrets, raw sensitive prompts or full upstream error bodies.
-7. **Remove diagnostics:** public GET should not reveal key fingerprints or configuration; prefer a minimal generic health endpoint, if necessary.
-8. **Security validation:** automated tests for spoofed headers, missing limiter, oversized/chunked bodies, malformed requests, budget exhaustion, concurrent requests and upstream failures.
-9. **Privacy:** avoid collecting personal data by default; disclose AI processing to users and define retention/deletion behavior.
+`src/lib/ai/protected-handler.ts` is a candidate server handler with injected dependencies, **not imported by the public route**. It has no authentication or live OpenAI adapter.
 
-## Deployment decision
-Until a hosting provider and shared storage are confirmed, a safe zero-cost release is **public static/content features with paid AI disabled**. Do not silently downgrade to the current process-local limiter.
+- Default-off configuration, exact origin check, model allowlist and a second emergency switch check immediately before generation.
+- Requires a verified enrolled account from a server authentication adapter. Forwarded IP headers, body IDs, arbitrary cookies and freely issued anonymous sessions are not identities. Origin checking supplements authentication; it does not replace it.
+- Strict schemas, known catalog IDs, 2,000-character questions, six bounded history entries. Rejects oversized declared bodies and counts actual streamed bytes before JSON parsing: 64 KiB, fatal UTF-8 decoding, five-second body deadline, no compression.
+- Complete text prompt bounded to 16,000 UTF-8 bytes including a 1,024-byte framing allowance; output capped at 900 tokens. The actual provider adapter must verify the tokenizer/framing bound for the pinned model before activation.
+- Authentication and store operations have two-second deadlines. Generation has a 20-second deadline and abort signal, no automatic retries, generic errors and `store: false`.
+- Shared Redis Lua admission atomically checks per-account and global one-minute counters, concurrency and a lifetime budget. All keys share a Redis Cluster hash slot. Missing budget, disabled state, exhausted budget, unavailable store or unexpected response fail closed. Raw account IDs are hashed in Redis keys.
+- Every admitted request debits an explicitly configured conservative maximum cost in integer micro-USD **before** generation. No automatic refund, even on failure or timeout: ambiguous requests may still be billed. A 45-second concurrency lease remains after ambiguous failures. Successful responses release concurrency only.
+- The public route and UI continue their offline fallback. No secrets, key fingerprints, model diagnostics or raw upstream errors are exposed.
 
-## Remaining unknowns
-Actual proxy trust chain, provider concurrency semantics, available atomic store, production key settings, OpenAI account spending protections, traffic expectations and costs. These require deployment-specific verification before enabling AI.
+## Required operating contract
+
+Provision the Redis state hash `{<namespace>}:state` through a private operator path with `enabled=0` and an explicitly approved `remaining_microusd`. No automatic budget refill, environment-derived default allowance, client-accessible reset or self-provisioning is implemented. The founder's roughly $50 balance is **not** permission to allocate or spend it.
+
+Use one namespace for the entire OpenAI project across instances/deployments. Namespace changes must not reset accounting. Configure authentication, TLS, persistence, backups and a no-eviction policy on the selected store. Restoring an old budget snapshot can restore spent allowance; reconcile provider usage before resuming. Store failure must never fall back to process-local counters. In-flight work can complete after a kill switch; the switch blocks subsequent admission, not already billed work.
+
+Configure the reservation from a reviewed model price and maximum input/output usage, including reasoning tokens where applicable. Reservations are intentionally conservative and may exhaust the allowance early. Validate provider cancellation, timeouts and any SDK retry behavior; disable retries. Do not accept client-provided model, price, limit or budget.
+
+OpenAI's current documentation describes organization/project **enforced spend limits** separately from alerts. Limits can overshoot slightly because accounting is not instantaneous. Configure and verify enforced project limits and alerts in the actual account, with a safety margin; neither this application ledger nor a provider limit proves an exact monetary ceiling.
+
+## Verification and activation gates
+
+Unit/API tests cover malformed and streamed bodies, request deadlines, spoofed identities, unknown IDs, history limits, context size, model allowlist, kill switch, store outages and upstream timeouts/errors. The CI Redis service tests independent clients racing for one budget, identity/global/concurrency limits, shared shutdown, missing state and non-refundable reservations. No paid calls are used.
+
+Before any activation, all of these remain required:
+
+1. Select hosting and a shared persistent store within an approved budget; verify timeout and failure behavior on that platform.
+2. Implement server-verified authentication and controlled enrollment, session security/CSRF, account abuse controls and deletion/privacy disclosures.
+3. Implement a server-only provider adapter and secret storage; confirm tokenizer and conservative cost calculations for an approved pinned model. Never use `NEXT_PUBLIC_` for secrets.
+4. Verify real store durability/failover and provider enforced spend settings. Test multi-instance behavior and monitoring in a private environment.
+5. Obtain explicit permission for any paid validation call and, separately, public AI activation. The public route must remain hard-disabled until then.
+
+## Sources
+
+- [Redis atomic scripting](https://redis.io/docs/latest/develop/programmability/eval-intro/)
+- [OpenAI API authentication](https://developers.openai.com/api/reference/overview)
+- [OpenAI spend limits and enforcement caveat](https://developers.openai.com/api/docs/guides/spend-limits)
+- [OpenAI token counting](https://developers.openai.com/api/docs/guides/token-counting)

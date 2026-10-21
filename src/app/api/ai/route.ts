@@ -6,12 +6,12 @@ export const runtime = "nodejs";
 // and enforceable budget protections are implemented for the actual host.
 // Do not enable by environment variable alone.
 export function GET() {
-  return NextResponse.json({ available: false }, { status: 503 });
+  return NextResponse.json({ available: false }, { status: 503, headers: { "Cache-Control": "no-store" } });
 }
 
 export function POST() {
   return NextResponse.json(
     { error: "CosmoLens AI is temporarily unavailable." },
-    { status: 503 },
+    { status: 503, headers: { "Cache-Control": "no-store" } },
   );
 }
