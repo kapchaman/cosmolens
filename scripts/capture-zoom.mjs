@@ -67,8 +67,8 @@ try {
   const worker =
     context.serviceWorkers()[0] ||
     (await context.waitForEvent("serviceworker"));
-  const page = await context.newPage();
   for (const route of ["/", "/lab", "/atlas"]) {
+    const page = await context.newPage();
     await page.goto(base + route);
     await page.locator("h1").waitFor();
     const zoom = await worker.evaluate(async (url) => {
@@ -109,6 +109,10 @@ try {
       `${route}: root overflow at 200%`,
     );
     assert.deepEqual(metrics.brokenImages, []);
+    // Capture the initial viewport before focus/scroll changes. A fresh tab per
+    // route avoids stale compositor tiles when Chromium tab zoom is active.
+    const slug = route === "/" ? "home" : route.slice(1);
+    await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
     // Controls remain reachable and operable after reflow, even below the fold.
     if (route === "/atlas") {
       const search = page.getByRole("searchbox", { name: "Search atlas" });
@@ -132,19 +136,8 @@ try {
       await page.keyboard.press("Home");
       for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
     }
-    await page.evaluate(() => {
-      document.activeElement?.blur();
-      document.documentElement.style.scrollBehavior = 'auto';
-      window.scrollTo({top:0,behavior:'instant'});
-    });
-    await page.waitForFunction(() => scrollY === 0);
-    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    const slug = route === "/" ? "home" : route.slice(1);
-    // At real tab zoom, Playwright fullPage clips using unzoomed CSS dimensions.
-    // Preserve the actual 1440×900 browser viewport; normal-zoom full pages are
-    // captured separately by capture-observatory.mjs.
-    await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
     results.push({ route, zoom, metrics });
+    await page.close();
   }
   await writeFile(
     `${out}/manifest.json`,
