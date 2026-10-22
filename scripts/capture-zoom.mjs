@@ -113,8 +113,14 @@ try {
     if (route === "/atlas") {
       const search = page.getByRole("searchbox", { name: "Search atlas" });
       await search.fill("Jupiter");
-      assert.equal(await page.locator("[data-object-id]").count(), 1);
+      // Search includes descriptions, aliases and tags, so related objects may match.
+      await page.waitForFunction(() => {
+        const count = document.querySelectorAll('[data-object-id]').length;
+        return count > 0 && count < 33;
+      });
+      assert.equal(await page.locator('[data-object-id="jupiter"]').count(), 1);
       await search.fill("");
+      await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length === 33);
     }
     if (route === "/lab") {
       const slider = page.getByRole("slider", {
@@ -124,7 +130,7 @@ try {
       await page.keyboard.press("End");
       assert.equal(await slider.inputValue(), "3");
       await page.keyboard.press("Home");
-      await page.keyboard.press("ArrowRight");
+      for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
     }
     await page.evaluate(() => window.scrollTo(0, 0));
     const slug = route === "/" ? "home" : route.slice(1);

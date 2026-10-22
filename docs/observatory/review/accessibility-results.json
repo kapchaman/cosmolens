@@ -1,0 +1,32 @@
+[
+  {
+    "width": 1440,
+    "route": "/",
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "route": "/lab",
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "route": "/atlas",
+    "violations": []
+  },
+  {
+    "width": 390,
+    "route": "/",
+    "violations": []
+  },
+  {
+    "width": 390,
+    "route": "/lab",
+    "violations": []
+  },
+  {
+    "width": 390,
+    "route": "/atlas",
+    "violations": []
+  }
+]

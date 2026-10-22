@@ -31,7 +31,7 @@ export function ExperimentDiagram({
               : "REFERENCE STATE"}
         </strong>
       </div>
-      <svg viewBox="0 0 480 280" role="img" aria-labelledby={id}>
+      <svg viewBox="0 0 480 310" role="img" aria-labelledby={id}>
         <title id={id}>
           {earth
             ? `Earth at ${mass.toFixed(2)} times its mass, with an unchanged radius. Acceleration arrows grow with mass.`
@@ -84,7 +84,7 @@ export function ExperimentDiagram({
             {[0, 90, 180, 270].map((a) => (
               <g key={a} transform={`rotate(${a} 240 140)`}>
                 <line
-                  x1={329 + mass * 18}
+                  x1={329 + mass * 12}
                   x2="329"
                   y1="140"
                   y2="140"
@@ -109,7 +109,7 @@ export function ExperimentDiagram({
 
             <text
               x="240"
-              y="274"
+              y="300"
               fill="var(--muted)"
               fontSize="17"
               textAnchor="middle"

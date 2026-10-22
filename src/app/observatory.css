@@ -493,7 +493,7 @@
     overflow-wrap: anywhere;
   }
   .obs-readout .obs-readout-hint {
-    font-size: 0.75rem;
+    font: 400 0.75rem/1.6 var(--font-inter), sans-serif;
     color: var(--muted);
     margin-top: 8px;
   }
@@ -963,7 +963,7 @@
     border-top: 1px solid var(--border);
     background: var(--nebula);
   }
-  .lab-output-grid .obs-readout dd {
+  .lab-output-grid .obs-readout dd:first-of-type {
     font-size: 1.7rem;
     color: var(--ion);
   }
@@ -1444,7 +1444,7 @@
       border-top: 1px solid var(--border);
       padding-top: 14px;
     }
-    .lab-output-grid .obs-readout dd {
+    .lab-output-grid .obs-readout dd:first-of-type {
       font-size: 1.5rem;
     }
     .lab-equation {
