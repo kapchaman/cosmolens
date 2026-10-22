@@ -132,13 +132,18 @@ try {
       await page.keyboard.press("Home");
       for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
     }
-    await page.evaluate(() => window.scrollTo(0, 0));
-    const slug = route === "/" ? "home" : route.slice(1);
-    await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
-    await page.screenshot({
-      path: `${out}/${slug}-200-percent-full.png`,
-      fullPage: true,
+    await page.evaluate(() => {
+      document.activeElement?.blur();
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo({top:0,behavior:'instant'});
     });
+    await page.waitForFunction(() => scrollY === 0);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const slug = route === "/" ? "home" : route.slice(1);
+    // At real tab zoom, Playwright fullPage clips using unzoomed CSS dimensions.
+    // Preserve the actual 1440×900 browser viewport; normal-zoom full pages are
+    // captured separately by capture-observatory.mjs.
+    await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
     results.push({ route, zoom, metrics });
   }
   await writeFile(
