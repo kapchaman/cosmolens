@@ -1,5 +1,5 @@
 import { safeHttpUrl } from "@/lib/integrations/url";
-import { htmlToPlainText, truncateText } from "@/lib/integrations/text";
+import { htmlToPlainText, truncateText, cleanNewsSummary } from "@/lib/integrations/text";
 import type { AstronomyNewsItem, NewsSourceId } from "@/types/integrations";
 
 type FeedSource = {
@@ -88,7 +88,7 @@ export function parseFeedItems(xml: string, source: FeedSource): AstronomyNewsIt
       return {
         id: `${source.id}-${id}`,
         title,
-        summary: truncateText(summary || "Official source item. Open the source for full context.", 260),
+        summary: truncateText(cleanNewsSummary(summary) || "Official source item. Open the source for full context.", 260),
         url,
         publishedAt,
         source: {

@@ -7,16 +7,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="page-shell">
       <a href="#main-content" className="skip-link">Skip to content</a>
-      <header className="sticky top-0 z-40 border-b border-[color:var(--border)] bg-[rgba(5,6,7,0.82)] backdrop-blur-xl">
+      <header className="observatory-header sticky top-0 z-40 border-b border-[color:var(--border)] bg-[color:var(--background)]">
         <div className="app-container flex min-h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3" aria-label="CosmoLens home">
+          <Link href="/" className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--border)] bg-[color:var(--surface)]">
               <Sparkles aria-hidden="true" size={17} color="var(--accent)" />
             </span>
             <span>
               <span className="block text-sm font-bold tracking-[0.18em]">COSMOLENS</span>
               <span className="hidden text-xs text-[color:var(--muted)] sm:block">
-                Explore the universe. Understand the unknown.
+                The Living Observatory
               </span>
             </span>
           </Link>
@@ -30,7 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main id="main-content" tabIndex={-1} className="min-w-0 flex-1">{children}</main>
       <footer className="border-t border-[color:var(--border)] py-8">
         <div className="app-container flex flex-col justify-between gap-3 text-sm text-[color:var(--muted)] md:flex-row">
-          <span>CosmoLens is built around sourced astronomy, explicit uncertainty, and contextual AI.</span>
+          <span>CosmoLens · Observe. Question. Understand.</span>
           <Link href="/privacy" className="underline">Privacy and local data</Link>
           <span>Sourced exploration • AI temporarily offline</span>
         </div>

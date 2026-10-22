@@ -14,7 +14,7 @@ export function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
-  const active = (href: string) => href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  const active = (href: string) => href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`) || (href === "/atlas" && pathname.startsWith("/objects/"));
   return <div onKeyDown={(event) => { if (event.key === "Escape" && open) { setOpen(false); button.current?.focus(); } }}>
     <nav className="hidden items-center gap-1 xl:flex" aria-label="Main navigation">
       {items.map((item) => <Link key={item.href} href={item.href} className="button button-ghost min-h-11 px-2 text-sm" aria-current={active(item.href) ? "page" : undefined}>{item.label}</Link>)}

@@ -1,82 +1,153 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useMemo } from "react";
+import { Suspense, useId } from "react";
 import { useSearchParams } from "next/navigation";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { updateQuery } from "@/lib/navigation";
-import { ArrowLeft, ArrowRight, Database, Maximize2, Ruler } from "lucide-react";
-import type { AstronomicalObject, CosmicScaleNode } from "@/types/astronomy";
 import { formatConfidence } from "@/lib/astronomy/format";
+import { sourceById } from "@/content/sources";
+import type { AstronomicalObject, CosmicScaleNode } from "@/types/astronomy";
+import { SectionHeading, Readout } from "@/components/observatory/Primitives";
 
-type ScaleObjectSummary = Pick<AstronomicalObject, "id" | "name" | "category" | "summary">;
-
-function formatPowerOfTen(value: number) {
-  const exponent = Math.floor(Math.log10(value));
-  return `10^${exponent} m`;
+type ScaleObjectSummary = Pick<
+  AstronomicalObject,
+  "id" | "name" | "category" | "summary"
+>;
+function scientific(value: number) {
+  const [mantissa, exp] = value.toExponential(1).split("e");
+  return `${mantissa} × 10${Number(exp)
+    .toString()
+    .replace(
+      /./g,
+      (c) =>
+        ({
+          "-": "⁻",
+          "0": "⁰",
+          "1": "¹",
+          "2": "²",
+          "3": "³",
+          "4": "⁴",
+          "5": "⁵",
+          "6": "⁶",
+          "7": "⁷",
+          "8": "⁸",
+          "9": "⁹",
+        })[c] || c,
+    )}`;
 }
-
-function formatScaleJump(value: number) {
-  if (value < 1000) {
-    return `${value.toFixed(1)}x`;
-  }
-
-  const exponent = Math.floor(Math.log10(value));
-  return `~10^${exponent}x`;
-}
-
-function VisualSystem({ mode, order }: { mode: CosmicScaleNode["visualMode"]; order: number }) {
-  const density = Math.min(9, Math.max(3, order));
-  const marks = Array.from({ length: density * 3 }, (_, index) => index);
-
+function ScaleScene({
+  active,
+  previous,
+}: {
+  active: CosmicScaleNode;
+  previous: CosmicScaleNode | null;
+}) {
+  const id = useId();
+  const referenceSize = previous?.approximateSizeMeters || 1.2756e7;
+  const referenceTitle = previous?.title || "Earth";
+  const max = Math.max(active.approximateSizeMeters, referenceSize);
+  const currentRadius = (65 * active.approximateSizeMeters) / max;
+  const referenceRadius = (65 * referenceSize) / max;
+  const body = active.visualMode === "body";
   return (
-    <div className={`relative h-full min-h-[340px] overflow-hidden scale-mode-${mode}`}>
-      <div className="scale-dial" />
-      <div className="signal-line" />
-      <div className="absolute inset-0">
-        {marks.map((mark) => {
-          const left = (mark * 31 + order * 11) % 100;
-          const top = (mark * 47 + order * 7) % 100;
-          const size = mode === "cosmic-web" ? 2 + (mark % 4) : 2 + (mark % 3);
-
-          return (
-            <span
-              key={mark}
-              className="absolute rounded-full bg-white/55"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                width: size,
-                height: size,
-                opacity: mode === "body" ? 0.18 : 0.36,
-              }}
+    <figure className="scale-scene" data-testid="scale-scene">
+      <svg viewBox="0 0 400 240" role="img" aria-labelledby={id}>
+        <title id={id}>
+          {body ? "Diameter" : "Reference span"} comparison: {active.title} and{" "}
+          {referenceTitle}. Sizes are proportional; marks below one pixel are
+          indicated.
+        </title>
+        <g stroke="#263d54" strokeWidth="1">
+          {[40, 80, 120, 160, 200, 240, 280, 320, 360].map((x) => (
+            <line key={x} x1={x} x2={x} y1="24" y2="212" />
+          ))}
+          {[40, 80, 120, 160, 200].map((y) => (
+            <line key={y} x1="24" x2="376" y1={y} y2={y} />
+          ))}
+        </g>
+        {body ? (
+          <>
+            <circle
+              cx="122"
+              cy="108"
+              r={Math.max(1, currentRadius)}
+              fill="#173c52"
+              stroke="var(--ion)"
+              strokeWidth="2"
             />
-          );
-        })}
-      </div>
-      <div className="absolute inset-[18%] flex items-center justify-center">
-        <div
-          className="rounded-full border border-[rgba(214,168,95,0.58)] bg-[rgba(214,168,95,0.13)]"
-          style={{
-            width: `${Math.min(76, 18 + order * 5)}%`,
-            aspectRatio: "1 / 1",
-            boxShadow: "inset 0 0 48px rgba(214,168,95,0.1)",
-          }}
-        />
-      </div>
-      {mode === "galaxy" || mode === "galaxy-group" || mode === "cluster" ? (
-        <div className="absolute left-1/2 top-1/2 h-[20%] w-[82%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full border border-[rgba(121,200,214,0.34)] bg-[rgba(121,200,214,0.06)]" />
-      ) : null}
-      {mode === "cosmic-web" ? (
-        <div className="absolute inset-10 opacity-80">
-          <div className="absolute left-[12%] top-[32%] h-px w-[68%] rotate-12 bg-[rgba(121,200,214,0.36)]" />
-          <div className="absolute left-[25%] top-[18%] h-px w-[54%] rotate-[58deg] bg-[rgba(214,168,95,0.32)]" />
-          <div className="absolute left-[7%] top-[70%] h-px w-[76%] rotate-[-24deg] bg-[rgba(136,184,138,0.32)]" />
-        </div>
-      ) : null}
-    </div>
+            <circle
+              cx="294"
+              cy="108"
+              r={Math.max(1, referenceRadius)}
+              fill="#443726"
+              stroke="var(--solar)"
+              strokeWidth="2"
+            />
+            <path
+              d={`M ${122 - currentRadius} 188 v 6 H ${122 + currentRadius} v -6`}
+              fill="none"
+              stroke="var(--ion)"
+              strokeWidth="2"
+            />
+            <path
+              d={`M ${294 - referenceRadius} 188 v 6 H ${294 + referenceRadius} v -6`}
+              fill="none"
+              stroke="var(--solar)"
+              strokeWidth="2"
+            />
+          </>
+        ) : (
+          <>
+            <rect
+              x="40"
+              y="65"
+              width="320"
+              height="32"
+              fill="#173c52"
+              stroke="var(--ion)"
+              strokeWidth="2"
+            />
+            <rect
+              x="40"
+              y="150"
+              width={Math.max(
+                1,
+                (320 * referenceSize) / active.approximateSizeMeters,
+              )}
+              height="32"
+              fill="#443726"
+              stroke="var(--solar)"
+              strokeWidth="2"
+            />
+            <text x="40" y="52" fill="var(--ion)" fontSize="17">
+              Current reference span
+            </text>
+            <text x="40" y="138" fill="var(--solar)" fontSize="17">
+              Previous reference span
+            </text>
+          </>
+        )}
+      </svg>
+      <figcaption>
+        <span>
+          <strong>{active.title}</strong>
+          <br />
+          {body ? "Diameter comparison" : "Linear span comparison"}
+        </span>
+        <span>
+          {referenceTitle}
+          <br />
+          {(body
+            ? referenceRadius
+            : (320 * referenceSize) / active.approximateSizeMeters) < 1
+            ? "Below drawing resolution"
+            : "Same linear ruler"}
+        </span>
+      </figcaption>
+    </figure>
   );
 }
-
 function CosmicScaleContent({
   nodes,
   objects = [],
@@ -85,162 +156,206 @@ function CosmicScaleContent({
   objects?: ScaleObjectSummary[];
 }) {
   const params = useSearchParams();
-  const index = Math.max(0, nodes.findIndex((node) => node.id === params.get("scale")));
-  const setIndex = (next: number) => updateQuery({ scale: nodes[Math.max(0, Math.min(nodes.length - 1, next))].id });
-  const active = nodes[index];
-  const progress = useMemo(() => ((index + 1) / nodes.length) * 100, [index, nodes.length]);
-  const objectById = useMemo(() => new Map(objects.map((object) => [object.id, object])), [objects]);
-  const activeObjects = active.objectIds.map((id) => objectById.get(id)).filter((object): object is ScaleObjectSummary => Boolean(object));
-  const previousNode = index > 0 ? nodes[index - 1] : null;
-  const scaleJump = previousNode ? active.approximateSizeMeters / previousNode.approximateSizeMeters : null;
-
-
+  const index = Math.max(
+    0,
+    nodes.findIndex((node) => node.id === params.get("scale")),
+  );
+  const active = nodes[index],
+    previous = index > 0 ? nodes[index - 1] : null;
+  const setIndex = (next: number) =>
+    updateQuery({
+      scale: nodes[Math.max(0, Math.min(nodes.length - 1, next))].id,
+    });
+  const linked = active.objectIds
+    .map((id) => objects.find((o) => o.id === id))
+    .filter((o): o is ScaleObjectSummary => Boolean(o));
   return (
-    <section className="section" id="cosmic-scale" aria-label="Cosmic Scale Explorer" onKeyDown={(event) => {
-      if (event.target instanceof HTMLElement && event.target.closest("input, textarea, select, [contenteditable=true]")) return;
-      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-        event.preventDefault();
-        setIndex(index + (event.key === "ArrowRight" ? 1 : -1));
-      }
-    }}>
-      <div className="app-container">
-        <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div>
-            <div className="eyebrow">Cosmic Scale</div>
-            <h2 className="mt-3 max-w-3xl text-4xl font-semibold leading-tight md:text-5xl">
-              Move from nearby worlds to large-scale structure.
-            </h2>
-          </div>
-          <div className="flex gap-2">
+    <section
+      className="obs-section obs-container"
+      id="cosmic-scale"
+      aria-label="Cosmic Scale Explorer"
+      onKeyDown={(event) => {
+        if (
+          event.target instanceof HTMLElement &&
+          event.target.closest("input,textarea,select,[contenteditable=true]")
+        )
+          return;
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          setIndex(index + (event.key === "ArrowRight" ? 1 : -1));
+        }
+      }}
+    >
+      <SectionHeading
+        index="01"
+        eyebrow="Cosmic Scale Explorer"
+        title="A change in scale. A new perspective."
+      >
+        <p>
+          Ten reference scales, from our nearest neighbour to the structure of
+          the universe.
+        </p>
+      </SectionHeading>
+      <div className="scale-instrument">
+        <div className="scale-instrument-head">
+          <p className="obs-kicker">
+            Scale instrument / {String(index + 1).padStart(2, "0")} of{" "}
+            {nodes.length}
+          </p>
+          <div className="obs-actions">
             <button
-              className="button button-ghost size-10 p-0"
+              className="obs-action"
               type="button"
               aria-label="Previous scale"
               disabled={index === 0}
               onClick={() => setIndex(index - 1)}
             >
-              <ArrowLeft aria-hidden="true" size={17} />
+              <ArrowLeft size={18} aria-hidden="true" />
             </button>
             <button
-              className="button button-ghost size-10 p-0"
+              className="obs-action"
               type="button"
               aria-label="Next scale"
               disabled={index === nodes.length - 1}
               onClick={() => setIndex(index + 1)}
             >
-              <ArrowRight aria-hidden="true" size={17} />
+              <ArrowRight size={18} aria-hidden="true" />
             </button>
           </div>
         </div>
-
-        <div className="panel grid overflow-hidden lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="visual-frame min-h-[420px] rounded-none border-0">
-            <VisualSystem mode={active.visualMode} order={active.order} />
-            <div className="absolute left-5 top-5 flex items-center gap-2 rounded-md border border-[color:var(--border)] bg-black/30 px-3 py-2 text-sm text-[color:var(--muted)] backdrop-blur">
-              <Maximize2 aria-hidden="true" size={15} />
-              {active.visualMode.replaceAll("-", " ")}
-            </div>
-            <div className="absolute bottom-5 left-5 right-5 grid gap-3 sm:grid-cols-3">
-              <div className="quiet-panel p-3">
-                <Ruler aria-hidden="true" size={15} color="var(--accent)" />
-                <div className="mt-2 text-xs text-[color:var(--muted)]">reference scale</div>
-                <div className="mt-1 font-mono text-sm">{formatPowerOfTen(active.approximateSizeMeters)}</div>
-              </div>
-              <div className="quiet-panel p-3">
-                <Maximize2 aria-hidden="true" size={15} color="var(--cyan)" />
-                <div className="mt-2 text-xs text-[color:var(--muted)]">jump from previous</div>
-                <div className="mt-1 font-mono text-sm">{scaleJump ? formatScaleJump(scaleJump) : "origin"}</div>
-              </div>
-              <div className="quiet-panel p-3">
-                <Database aria-hidden="true" size={15} color="var(--green)" />
-                <div className="mt-2 text-xs text-[color:var(--muted)]">linked entries</div>
-                <div className="mt-1 font-mono text-sm">{activeObjects.length}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-between gap-8 p-6 md:p-8">
-            <div>
-              <div className="tiny-label">
-                {String(index + 1).padStart(2, "0")} / {String(nodes.length).padStart(2, "0")}
-              </div>
-              <h3 className="mt-4 text-3xl font-semibold">{active.title}</h3>
-              <p className="mt-2 text-[color:var(--muted)]">{active.subtitle}</p>
-              <p className="mt-6 text-base text-[color:var(--muted)]">{active.context}</p>
-              <p className="mt-3 text-sm text-[color:var(--muted)]">{active.sizeDescription} Illustration is schematic.</p>
-              {activeObjects.length ? (
-                <div className="mt-5">
-                  <div className="tiny-label">Explore this scale</div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {activeObjects.map((object) => (
-                      <Link key={object.id} href={`/objects/${object.id}`} className="confidence mt-0 hover:border-[color:var(--accent)] hover:text-[color:var(--foreground)]">
-                        {object.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              <div className="mt-6 grid gap-3">
-                {active.measurements.map((measurement) => (
-                  <div key={measurement.label} className="quiet-panel p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <span>
-                        <span className="block text-sm text-[color:var(--muted)]">{measurement.label}</span>
-                        <span className="mt-1 block text-lg font-semibold">
-                          {measurement.value}
-                          {measurement.unit ? ` ${measurement.unit}` : ""}
-                        </span>
-                      </span>
-                      <span className="confidence mt-0">{formatConfidence(measurement.confidence)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="tiny-label" htmlFor="scale-slider">
-                Scale position
+        <div className="scale-layout">
+          <div className="scale-display">
+            <ScaleScene active={active} previous={previous} />
+            <div className="scale-controls">
+              <label htmlFor="scale-slider">
+                Scale position{" "}
+                <output>
+                  {String(index + 1).padStart(2, "0")} / {nodes.length}
+                </output>
               </label>
               <input
                 id="scale-slider"
-                className="mt-3 w-full accent-[color:var(--accent)]"
                 type="range"
-                min={0}
+                min="0"
                 max={nodes.length - 1}
+                step="1"
                 value={index}
                 aria-valuetext={active.title}
-                onChange={(event) => setIndex(Number(event.target.value))}
+                onChange={(e) => setIndex(Number(e.target.value))}
               />
-              <div className="mt-3 h-1 rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-[color:var(--accent)]" style={{ width: `${progress}%` }} />
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-[color:var(--muted)] sm:grid-cols-5">
-                {nodes.map((node, nodeIndex) => (
-                  <button
-                    key={node.id}
-                    className={`rounded-md border px-2 py-2 text-left transition ${
-                      nodeIndex === index
-                        ? "border-[color:var(--accent)] bg-[rgba(214,168,95,0.12)] text-[color:var(--foreground)]"
-                        : "border-[color:var(--border)] bg-transparent"
-                    }`}
-                    type="button"
-                    aria-pressed={nodeIndex === index}
-                    onClick={() => setIndex(nodeIndex)}
-                  >
-                    {node.title}
-                  </button>
-                ))}
+              <div className="scale-endpoints">
+                <span>NEARBY WORLDS</span>
+                <span>COSMIC STRUCTURE</span>
               </div>
             </div>
+            <dl className="scale-readouts" data-testid="scale-readouts">
+              <Readout
+                label="Reference size"
+                value={scientific(active.approximateSizeMeters)}
+                unit="m"
+              />
+              <Readout
+                label="From previous"
+                value={
+                  previous
+                    ? scientific(
+                        active.approximateSizeMeters /
+                          previous.approximateSizeMeters,
+                      )
+                    : "Start"
+                }
+                unit={previous ? "×" : undefined}
+              />
+              <Readout label="Linked records" value={linked.length} />
+            </dl>
           </div>
+          <div className="scale-copy">
+            <p className="obs-kicker">
+              {active.visualMode.replaceAll("-", " ")}
+            </p>
+            <h3 aria-live="polite">{active.title}</h3>
+            <p className="scale-subtitle">{active.subtitle}</p>
+            <p>{active.context}</p>
+            <div className="scale-reference">
+              <p>
+                {active.sizeDescription} The diagram compares reference sizes,
+                not positions or distances between objects.
+              </p>
+              {active.measurements.map((m) => (
+                <dl key={m.label}>
+                  <dt>
+                    {m.label} · {formatConfidence(m.confidence)}
+                  </dt>
+                  <dd>
+                    {m.value} {m.unit}
+                  </dd>
+                  <dd>
+                    {m.sourceIds.map((id) => {
+                      const s = sourceById.get(id);
+                      return s ? (
+                        <a
+                          key={id}
+                          href={s.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="obs-text-link"
+                        >
+                          Source: {s.organization} ↗
+                        </a>
+                      ) : null;
+                    })}
+                  </dd>
+                </dl>
+              ))}
+            </div>
+            <div className="scale-object-links">
+              {linked.map((o) => (
+                <Link key={o.id} href={`/objects/${o.id}`}>
+                  {o.name} ↗
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div
+          className="scale-stations"
+          role="group"
+          aria-label="Choose a cosmic scale"
+        >
+          {nodes.map((node, i) => (
+            <button
+              type="button"
+              key={node.id}
+              aria-pressed={index === i}
+              onClick={() => setIndex(i)}
+            >
+              {node.title}
+            </button>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-
-export function CosmicScaleExplorer(props: { nodes: CosmicScaleNode[]; objects?: ScaleObjectSummary[] }) {
-  if (!props.nodes.length) return <p role="status">No scale entries are available.</p>;
-  return <Suspense fallback={<section id="cosmic-scale" className="section app-container" role="status">Loading cosmic scale…</section>}><CosmicScaleContent {...props} /></Suspense>;
+export function CosmicScaleExplorer(props: {
+  nodes: CosmicScaleNode[];
+  objects?: ScaleObjectSummary[];
+}) {
+  if (!props.nodes.length)
+    return <p role="status">No scale entries are available.</p>;
+  return (
+    <Suspense
+      fallback={
+        <section
+          className="obs-section obs-container"
+          id="cosmic-scale"
+          role="status"
+        >
+          Loading cosmic scale…
+        </section>
+      }
+    >
+      <CosmicScaleContent {...props} />
+    </Suspense>
+  );
 }

@@ -1,147 +1,293 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { AlertTriangle, Atom, Brain, FlaskConical } from "lucide-react";
-import { AssistantPanel } from "@/components/ai/AssistantPanel";
-import type { LabIntegrity, WhatIfScenario } from "@/types/lab";
+import { useState } from "react";
+import type { WhatIfScenario, LabIntegrity } from "@/types/lab";
+import {
+  OfflineAssistantNotice,
+  Readout,
+} from "@/components/observatory/Primitives";
+import { RotationCurveMini } from "@/components/visualizations/RotationCurveMini";
+import { ExperimentDiagram } from "./ExperimentDiagram";
+import { surfaceGravity, weightNewtons } from "@/lib/lab/gravity";
 
-const integrityLabel: Record<LabIntegrity, string> = {
-  "established-physics": "established physics",
-  "modeled-consequence": "modeled consequence",
-  speculative: "speculative",
+const shortNames: Record<string, string> = {
+  "earth-double-mass": "Earth mass",
+  "moon-disappears": "Moon & tides",
+  "sun-red-giant-today": "Stellar evolution",
+  "milky-way-no-dark-matter": "Galaxy dynamics",
 };
-
-function gravityEstimate(multiplier: number) {
-  return {
-    fixedRadius: (9.81 * multiplier).toFixed(1),
-    relative: multiplier.toFixed(2),
-  };
-}
-
+const integrity: Record<LabIntegrity, string> = {
+  "established-physics": "Established physics",
+  "modeled-consequence": "Modeled consequence",
+  speculative: "Speculative",
+};
 export function WhatIfLab({ scenarios }: { scenarios: WhatIfScenario[] }) {
   const [selectedId, setSelectedId] = useState(scenarios[0]?.id || "");
-  const selected = scenarios.find((scenario) => scenario.id === selectedId) || scenarios[0];
-  const [parameterValue, setParameterValue] = useState(selected?.parameter?.initial || 1);
-
-  const estimate = useMemo(() => gravityEstimate(parameterValue), [parameterValue]);
-
-  if (!selected) {
-    return null;
-  }
-
-  function selectScenario(id: string) {
-    const next = scenarios.find((scenario) => scenario.id === id);
+  const selected = scenarios.find((s) => s.id === selectedId) || scenarios[0];
+  const [parameterValue, setParameterValue] = useState(
+    selected?.parameter?.initial || 1,
+  );
+  const [bodyMass, setBodyMass] = useState("75");
+  const [changed, setChanged] = useState(true);
+  if (!selected) return null;
+  const isEarth = selected.id === "earth-double-mass",
+    isMoon = selected.id === "moon-disappears",
+    isGalaxy = selected.id === "milky-way-no-dark-matter";
+  const g = surfaceGravity(parameterValue);
+  const kg = Number(bodyMass),
+    validMass =
+      bodyMass.trim() !== "" && Number.isFinite(kg) && kg >= 1 && kg <= 500;
+  const weight = validMass ? weightNewtons(kg, g) : null;
+  const selectScenario = (id: string) => {
+    const next = scenarios.find((s) => s.id === id);
     setSelectedId(id);
     setParameterValue(next?.parameter?.initial || 1);
-  }
-
+    setChanged(true);
+  };
+  const description = isEarth
+    ? `At ${parameterValue.toFixed(2)} times Earth's mass and the same radius, surface gravity is ${g.toFixed(2)} m/s² (${parameterValue.toFixed(2)} times the reference value). ${weight === null ? "Enter a test-body mass to calculate its weight." : `A ${kg} kg test body still has ${kg} kg of mass, but its weight is now ${weight.toFixed(1)} newtons.`}`
+    : isMoon
+      ? changed
+        ? "The lunar contribution to tides is removed in this artificial scenario. Solar tides remain. This diagram does not predict local ocean heights."
+        : "Both the Moon and the Sun contribute to tidal forcing. Local tide heights also depend on coastlines, ocean depth and timing."
+      : isGalaxy
+        ? "Toggle the visible-matter prediction and the dark-matter model. These schematic curves illustrate why the observed motion calls for an explanation; they are not a numerical simulation of removing matter."
+        : changed
+          ? "A red giant has a cooler surface but can be much more luminous because its radiating surface is larger. This illustration compresses stellar evolution; no sudden change is physically possible."
+          : "The Sun is currently a main-sequence star. Core hydrogen fusion supplies energy. A red-giant phase belongs to its far future, on a timescale of billions of years.";
+  const source = isEarth
+    ? "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html"
+    : isMoon
+      ? "https://science.nasa.gov/moon/"
+      : isGalaxy
+        ? "https://science.nasa.gov/dark-matter/"
+        : "https://science.nasa.gov/exoplanets/stars/";
   return (
-    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-      <aside className="panel h-fit p-4">
-        <div className="mb-4 flex items-center gap-2">
-          <FlaskConical aria-hidden="true" size={17} color="var(--accent)" />
-          <h2 className="text-xl font-semibold">Scenarios</h2>
-        </div>
-        <div className="grid gap-2">
-          {scenarios.map((scenario) => (
-            <button
-              key={scenario.id}
-              className={`rounded-md border p-3 text-left transition ${
-                scenario.id === selected.id
-                  ? "border-[color:var(--accent)] bg-[rgba(214,168,95,0.12)]"
-                  : "border-[color:var(--border)] bg-transparent hover:bg-white/[0.04]"
-              }`}
-              type="button"
-              aria-pressed={scenario.id === selected.id}
-              onClick={() => selectScenario(scenario.id)}
-            >
-              <span className="block text-sm font-semibold">{scenario.title}</span>
-              <span className="mt-1 block text-xs text-[color:var(--muted)]">{scenario.summary}</span>
-            </button>
+    <div>
+      <div
+        className="lab-scenarios"
+        role="group"
+        aria-label="Choose an experiment"
+      >
+        {scenarios.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            title={s.title}
+            aria-pressed={s.id === selected.id}
+            onClick={() => selectScenario(s.id)}
+          >
+            <span>EXPERIMENT {String(i + 1).padStart(2, "0")}</span>
+            <strong>{shortNames[s.id] || s.title}</strong>
+          </button>
+        ))}
+      </div>
+      <div className="lab-scenario-select">
+        <label htmlFor="lab-scenario">Experiment</label>
+        <select
+          id="lab-scenario"
+          value={selected.id}
+          onChange={(e) => selectScenario(e.target.value)}
+        >
+          {scenarios.map((s) => (
+            <option value={s.id} key={s.id}>
+              {shortNames[s.id] || s.title}
+            </option>
           ))}
+        </select>
+      </div>
+      <section className="lab-instrument" aria-labelledby="experiment-title">
+        <div className="lab-instrument-title">
+          <div>
+            <p className="obs-kicker">
+              {isEarth
+                ? "Newtonian gravity / fixed radius"
+                : "Conceptual model / qualitative"}
+            </p>
+            <h2 id="experiment-title">
+              {isEarth ? "Earth under a different gravity." : selected.title}
+            </h2>
+          </div>
+          <span className="lab-status">
+            {isEarth ? "MODEL OUTPUT" : "THOUGHT EXPERIMENT"}
+          </span>
         </div>
-      </aside>
-
-      <div className="grid gap-6">
-        <section className="panel overflow-hidden">
-          <div className="grid gap-0 xl:grid-cols-[1fr_360px]">
-            <div className="p-6 md:p-8">
-              <div className="eyebrow">Hypothetical Simulation</div>
-              <h2 className="mt-3 text-4xl font-semibold leading-tight">{selected.title}</h2>
-              <p className="mt-4 max-w-3xl text-[color:var(--muted)]">{selected.summary}</p>
-
-              <div className="mt-6 quiet-panel p-4">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle aria-hidden="true" className="mt-1 shrink-0 text-[color:var(--accent)]" size={17} />
-                  <p className="text-sm text-[color:var(--muted)]">{selected.boundary}</p>
-                </div>
-              </div>
-
-              {selected.parameter ? (
-                <div className="mt-6 quiet-panel p-4">
-                  <label className="text-sm font-semibold" htmlFor={selected.parameter.id}>
-                    {selected.parameter.label}
-                  </label>
+        {isGalaxy ? (
+          <div className="p-4 md:p-6">
+            <RotationCurveMini />
+          </div>
+        ) : (
+          <div className="lab-workspace">
+            <ExperimentDiagram
+              kind={selected.id}
+              mass={parameterValue}
+              changed={changed}
+            />
+            <div className="lab-controls">
+              {isEarth && selected.parameter ? (
+                <>
+                  <div className="lab-control-label">
+                    <label htmlFor={selected.parameter.id}>
+                      {selected.parameter.label}
+                    </label>
+                    <output htmlFor={selected.parameter.id}>
+                      {parameterValue.toFixed(2)} × Earth
+                    </output>
+                  </div>
                   <input
                     id={selected.parameter.id}
-                    className="mt-3 w-full accent-[color:var(--accent)]"
                     type="range"
                     min={selected.parameter.min}
                     max={selected.parameter.max}
                     step={selected.parameter.step}
                     value={parameterValue}
-                    onChange={(event) => setParameterValue(Number(event.target.value))}
+                    aria-valuetext={`${parameterValue.toFixed(2)} times Earth mass`}
+                    onChange={(e) => setParameterValue(Number(e.target.value))}
                   />
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="confidence mt-0">
-                      {parameterValue.toFixed(2)} {selected.parameter.unit}
-                    </span>
-                    <span className="confidence mt-0">~{estimate.fixedRadius} m/s^2 fixed-radius gravity</span>
+                  <div className="lab-range-ends">
+                    <span>1.00 × EARTH</span>
+                    <span>3.00 × EARTH</span>
                   </div>
-                  <p className="mt-3 text-sm text-[color:var(--muted)]">{selected.parameter.assumption}</p>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="visual-frame min-h-[340px] rounded-none border-0">
-              <div className="scale-dial" />
-              <div className="signal-line" />
-              <div className="absolute inset-x-5 bottom-5 quiet-panel p-4">
-                <div className="flex items-center gap-2 font-semibold">
-                  <Atom aria-hidden="true" size={16} color="var(--cyan)" />
-                  Model boundary
-                </div>
-                <p className="mt-2 text-sm text-[color:var(--muted)]">
-                  Thought experiments are useful when assumptions stay visible.
-                </p>
-              </div>
+                  <p className="lab-live-acceleration" aria-live="polite">
+                    Surface acceleration <strong>{g.toFixed(2)} m/s²</strong>
+                  </p>
+                  <div className="lab-fixed-radius">
+                    <span className="obs-kicker">Held constant</span>
+                    <strong>Radius: 6,371 km</strong>
+                    <p>Changing mass does not change radius in this model.</p>
+                  </div>
+                  <details className="lab-mass-input">
+                    <summary>Test-body mass: {validMass ? kg : "—"} kg</summary>
+                    <label htmlFor="test-body-mass">Test-body mass</label>
+                    <input
+                      id="test-body-mass"
+                      type="number"
+                      min="1"
+                      max="500"
+                      step="1"
+                      value={bodyMass}
+                      aria-invalid={!validMass}
+                      aria-describedby="body-mass-help"
+                      onChange={(e) => setBodyMass(e.target.value)}
+                    />
+                    <span>kg</span>
+                    <p id="body-mass-help" className="control-help">
+                      {validMass
+                        ? "Mass is the amount of matter. Weight is a force, measured in newtons."
+                        : "Enter a mass between 1 and 500 kg."}
+                    </p>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <p className="obs-kicker">Compare the premise</p>
+                  <div
+                    className="lab-toggle"
+                    role="group"
+                    aria-label="Model state"
+                  >
+                    <button
+                      type="button"
+                      aria-pressed={!changed}
+                      onClick={() => setChanged(false)}
+                    >
+                      {isMoon ? "With Moon" : "Present Sun"}
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={changed}
+                      onClick={() => setChanged(true)}
+                    >
+                      {isMoon ? "Without Moon" : "Red giant"}
+                    </button>
+                  </div>
+                  <div className="lab-concept-number">
+                    {isMoon
+                      ? changed
+                        ? "Lunar forcing: removed"
+                        : "Lunar forcing: present"
+                      : changed
+                        ? "Expanded, cooler surface"
+                        : "Main sequence"}
+                  </div>
+                  <p className="control-help">
+                    {isMoon
+                      ? "Solar tidal forcing remains in both states. The drawing identifies contributions, not ocean heights."
+                      : "The size comparison is schematic. Stellar evolution takes billions of years, not the time it takes to press this button."}
+                  </p>
+                </>
+              )}
             </div>
           </div>
-        </section>
-
-        <section className="grid gap-4 md:grid-cols-3">
-          {selected.outcomes.map((outcome) => (
-            <article key={outcome.label} className="panel p-5">
-              <span className="confidence mt-0">{integrityLabel[outcome.integrity]}</span>
-              <h3 className="mt-4 text-xl font-semibold">{outcome.label}</h3>
-              <p className="mt-3 text-sm text-[color:var(--muted)]">{outcome.body}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="grid gap-6 lg:grid-cols-[1fr_420px]">
-          <div className="panel p-6">
-            <div className="flex items-center gap-2">
-              <Brain aria-hidden="true" size={18} color="var(--accent)" />
-              <h2 className="text-2xl font-semibold">Reasoning contract</h2>
+        )}
+        {isEarth && (
+          <>
+            <dl
+              className="lab-output-grid"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <Readout
+                label="Surface acceleration"
+                value={g.toFixed(2)}
+                unit="m/s²"
+                hint="How quickly a freely falling body speeds up"
+              />
+              <Readout
+                label="Test-body weight"
+                value={weight === null ? "—" : weight.toFixed(1)}
+                unit="N"
+                hint="Gravitational force on the test body"
+              />
+              <Readout
+                label="Planet mass"
+                value={parameterValue.toFixed(2)}
+                unit="M⊕"
+                hint="Earth-mass units; radius unchanged"
+              />
+            </dl>
+            <div className="lab-equation">
+              <code>g = GM / R² · W = mg</code>
+              <span>
+                Reference g₀ = 9.81 m/s² · spherical, non-rotating approximation
+              </span>
             </div>
-            <p className="mt-4 text-[color:var(--muted)]">
-              Every answer should separate known physics, model assumptions, and unknowns. The point is not to make fiction sound certain; it is to expose the causal structure.
+          </>
+        )}
+      </section>
+      <div className="lab-reasoning">
+        <div className="lab-explanation">
+          <h3>{isEarth ? "Read the result." : "What this tells us."}</h3>
+          <p data-testid="lab-explanation" aria-live="polite">
+            {description}
+          </p>
+          <div className="lab-outcomes">
+            {selected.outcomes.map((outcome) => (
+              <details key={outcome.label}>
+                <summary>{outcome.label}</summary>
+                <p>{outcome.body}</p>
+                <small>{integrity[outcome.integrity]}</small>
+              </details>
+            ))}
+          </div>
+        </div>
+        <aside className="lab-assumptions">
+          <h3>Where the model stops.</h3>
+          <p>{selected.boundary}</p>
+          {isEarth && (
+            <p className="mt-3">
+              Holding radius fixed isolates one variable. Density must increase
+              with mass. This model does not calculate a new equilibrium radius,
+              atmosphere or habitability, and omits rotation and local gravity
+              variation.
             </p>
-          </div>
-          <AssistantPanel key={selected.id} initialMode="explain" suggestedQuestion={selected.aiQuestion} />
-        </section>
+          )}
+          <a href={source} target="_blank" rel="noreferrer">
+            Read the scientific background ↗
+          </a>
+        </aside>
       </div>
+      <OfflineAssistantNotice />
     </div>
   );
 }
