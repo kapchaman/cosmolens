@@ -29,3 +29,11 @@ test("RSS text links and invalid dates are handled", () => {
   const [item] = parseFeedItems(`<rss><item><title>Star</title><link>https://www.nasa.gov/article</link><pubDate>not a date</pubDate></item></rss>`, source);
   expect(item.url).toBe("https://www.nasa.gov/article"); expect(item.publishedAt).toBeNull();
 });
+
+test('news descriptions exclude navigation chrome and preserve paragraph boundaries',()=>{
+  const rss=(description:string)=>`<rss><item><title>Galaxy discovery</title><link>https://www.nasa.gov/article</link><description><![CDATA[${description}]]></description></item></rss>`;
+  expect(parseFeedItems(rss('<p>Stars.</p><p>New results.</p>'),source)[0].summary).toBe('Stars. New results.');
+  expect(parseFeedItems(rss('Explore This Section Overview Technology Programs'),source)[0].summary).toBe('Official source item. Open the source for full context.');
+  expect(parseFeedItems(rss('APOD Science APOD Submissions Index Search Calendar RSS'),source)[0].summary).not.toContain('Submissions');
+  expect(parseFeedItems(rss('<div>2 min read</div><p>Preparations for a mission.</p>'),source)[0].summary).toBe('Preparations for a mission.');
+});

@@ -39,6 +39,14 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      - name: Capture observatory and verify actual 200% browser zoom
+        run: |
+          npm run start -- --hostname 127.0.0.1 --port 3100 > /tmp/cosmolens-preview.log 2>&1 &
+          COSMO_PREVIEW_PID=$!
+          trap 'kill "$COSMO_PREVIEW_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3100/api/health >/dev/null && break; sleep 1; done
+          node scripts/capture-observatory.mjs after
+          node scripts/capture-zoom.mjs
       - name: Upload browser evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -47,5 +55,5 @@ jobs:
           path: |
             playwright-report/
             test-results/
-          retention-days: 7
+          retention-days: 30
           if-no-files-found: ignore

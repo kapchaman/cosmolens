@@ -1,149 +1,165 @@
 import Link from "next/link";
-import { ArrowRight, Database, FlaskConical, Telescope } from "lucide-react";
-import { AssistantPanel } from "@/components/ai/AssistantPanel";
-import { ObjectCard } from "@/components/atlas/ObjectCard";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { CosmicScaleExplorer } from "@/components/cosmic-scale/CosmicScaleExplorer";
-import { JourneyPreview } from "@/components/journeys/JourneyPreview";
 import { ApodPanel } from "@/components/nasa/ApodPanel";
 import { LatestDiscoveriesPanel } from "@/components/news/LatestDiscoveriesPanel";
 import { RotationCurveMini } from "@/components/visualizations/RotationCurveMini";
-import { getAllObjects, getCosmicScale, getFeaturedObjects, getJourneys } from "@/lib/astronomy/catalog";
+import {
+  getAllObjects,
+  getCosmicScale,
+  getJourneys,
+} from "@/lib/astronomy/catalog";
+import { AstroImage } from "@/components/observatory/AstroImage";
+import { ArchiveCard } from "@/components/observatory/ArchiveCard";
+import {
+  OfflineAssistantNotice,
+  SectionHeading,
+} from "@/components/observatory/Primitives";
+import { observatoryMedia } from "@/content/observatory-media";
 
 export default function HomePage() {
-  const featuredObjects = getFeaturedObjects();
   const objects = getAllObjects();
-  const scale = getCosmicScale();
-  const journeys = getJourneys();
-  const primaryObject = featuredObjects[0];
-
+  const selected = ["earth", "jupiter", "andromeda"].map(
+    (id) => objects.find((o) => o.id === id)!,
+  );
+  const image = observatoryMedia.andromeda;
   return (
-    <>
-      <section className="min-h-[calc(100vh-65px)] py-10 md:py-16">
-        <div className="app-container grid min-h-[calc(100vh-160px)] gap-8 lg:grid-cols-[1fr_480px] lg:items-center">
-          <div>
-            <div className="eyebrow">CosmoLens</div>
-            <h1 className="headline mt-5">Explore the universe. Understand the unknown.</h1>
-            <p className="subhead mt-6">
-              A scientific exploration platform for cosmic scale, astronomical objects, evidence, and AI-assisted reasoning.
+    <div className="observatory-home">
+      <section className="obs-hero obs-container" aria-labelledby="home-title">
+        <div className="obs-grid hero-grid">
+          <div className="hero-copy">
+            <p className="obs-kicker">The Living Observatory</p>
+            <h1 id="home-title">
+              The universe,
+              <br />
+              in <em>perspective.</em>
+            </h1>
+            <p>
+              Travel from nearby worlds to the cosmic web. Change a physical
+              assumption. Follow the evidence behind what we know.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/atlas" className="button button-primary">
-                Open atlas
-                <ArrowRight aria-hidden="true" size={16} />
+            <div className="obs-actions">
+              <Link href="/atlas" className="obs-action obs-action-primary">
+                Explore the atlas <ArrowUpRight size={17} aria-hidden="true" />
               </Link>
-              <Link href="#cosmic-scale" className="button button-ghost">
-                Enter scale explorer
+              <Link href="#cosmic-scale" className="obs-action">
+                Change the scale <ArrowRight size={17} aria-hidden="true" />
               </Link>
-            </div>
-            <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
-              <div className="quiet-panel p-4">
-                <Database aria-hidden="true" size={17} color="var(--accent)" />
-                <div className="mt-3 text-2xl font-semibold">{featuredObjects.length}</div>
-                <div className="text-sm text-[color:var(--muted)]">featured objects</div>
-              </div>
-              <div className="quiet-panel p-4">
-                <Telescope aria-hidden="true" size={17} color="var(--cyan)" />
-                <div className="mt-3 text-2xl font-semibold">{scale.length}</div>
-                <div className="text-sm text-[color:var(--muted)]">scale nodes</div>
-              </div>
-              <div className="quiet-panel p-4">
-                <div className="text-sm text-[color:var(--muted)]">Current phase</div>
-                <div className="mt-3 text-2xl font-semibold">09/10</div>
-                <div className="text-sm text-[color:var(--muted)]">MVP foundations</div>
-              </div>
             </div>
           </div>
-
-          <div className="visual-frame min-h-[520px] p-5">
-            <div className="scale-dial" />
-            <div className="signal-line" />
-            <div className="absolute inset-x-5 top-5 flex items-center justify-between gap-3">
-              <span className="tiny-label">active object</span>
-              <span className="confidence mt-0">sourced</span>
-            </div>
-            <div className="absolute inset-x-5 bottom-5">
-              {primaryObject ? (
-                <div className="quiet-panel p-5">
-                  <div className="tiny-label">{primaryObject.category}</div>
-                  <h2 className="mt-2 text-3xl font-semibold">{primaryObject.name}</h2>
-                  <p className="mt-3 text-sm text-[color:var(--muted)]">{primaryObject.summary}</p>
-                  <Link href={`/objects/${primaryObject.id}`} className="button button-ghost mt-5">
-                    Inspect object
-                  </Link>
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <figure className="hero-observation">
+            <AstroImage media={image} priority />
+            <figcaption>
+              <div className="hero-caption">
+                <span>
+                  <strong>M31 / ANDROMEDA</strong>≈ 2.5 million light-years away
+                </span>
+                <a href={image.source} target="_blank" rel="noreferrer">
+                  Hubble mosaic · cropped detail ↗
+                </a>
+              </div>
+              <p className="hero-credit">{image.credit}</p>
+            </figcaption>
+          </figure>
         </div>
-      </section>
-
-      <CosmicScaleExplorer nodes={scale} objects={objects} />
-
-      <section className="section">
-        <div className="app-container">
-          <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <div className="eyebrow">Atlas</div>
-              <h2 className="mt-3 text-4xl font-semibold">Featured astronomical objects</h2>
-            </div>
-            <Link href="/atlas" className="button button-ghost">
-              View full atlas
+        <nav className="observatory-index" aria-label="Observatory instruments">
+          {[
+            {
+              n: "01",
+              title: "The atlas",
+              body: "33 objects. A connected universe.",
+              href: "/atlas",
+            },
+            {
+              n: "02",
+              title: "The experiment",
+              body: "Four questions. Visible assumptions.",
+              href: "/lab",
+            },
+            {
+              n: "03",
+              title: "The evidence",
+              body: "Guided journeys through big ideas.",
+              href: "/journeys",
+            },
+          ].map((x) => (
+            <Link href={x.href} key={x.n}>
+              <span className="index-number">{x.n}</span>
+              <div>
+                <h2>{x.title}</h2>
+                <p>{x.body}</p>
+              </div>
+              <ArrowUpRight size={20} aria-hidden="true" />
             </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {featuredObjects.slice(0, 6).map((object) => (
-              <ObjectCard key={object.id} object={object} />
-            ))}
-          </div>
+          ))}
+        </nav>
+      </section>
+      <CosmicScaleExplorer nodes={getCosmicScale()} objects={objects} />
+      <section className="obs-section obs-container">
+        <SectionHeading
+          index="02"
+          eyebrow="Field notes / the atlas"
+          title="Every object has a story."
+        >
+          <Link href="/atlas" className="obs-text-link">
+            Browse all {objects.length} objects{" "}
+            <ArrowUpRight size={17} aria-hidden="true" />
+          </Link>
+        </SectionHeading>
+        <div className="archive-grid">
+          {selected.map((object, i) => (
+            <ArchiveCard object={object} index={i} key={object.id} />
+          ))}
         </div>
       </section>
-
+      <section className="obs-section obs-container home-journal">
+        <SectionHeading
+          index="03"
+          eyebrow="Guided exploration"
+          title="Follow a question further."
+        >
+          <p>Build an explanation, one piece of evidence at a time.</p>
+        </SectionHeading>
+        <div className="journey-ledger">
+          {getJourneys().map((journey, i) => (
+            <Link href={`/journeys/${journey.id}`} key={journey.id}>
+              <span className="obs-kicker">
+                Journey {String(i + 1).padStart(2, "0")} /{" "}
+                {journey.steps.length} steps
+              </span>
+              <h3>{journey.title}</h3>
+              <p>{journey.summary}</p>
+              <span className="obs-text-link">
+                Start exploring <ArrowRight size={16} aria-hidden="true" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+      <section className="obs-section obs-container home-evidence">
+        <div className="home-evidence-copy">
+          <p className="obs-kicker">04 / Question the model</p>
+          <h2>
+            What happens when
+            <br />
+            the explanation changes?
+          </h2>
+          <p>
+            Compare the motion we observe with the motion a model predicts. The
+            difference is where the next question begins.
+          </p>
+          <Link href="/lab" className="obs-action obs-action-primary">
+            Open the experiment lab{" "}
+            <ArrowUpRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
+        <RotationCurveMini />
+      </section>
       <ApodPanel />
-
-      <section className="section">
-        <div className="app-container grid gap-6 lg:grid-cols-[1fr_420px]">
-          <RotationCurveMini />
-          <AssistantPanel objectId="andromeda" suggestedQuestion="Why is Andromeda moving toward the Milky Way?" />
-        </div>
+      <section className="obs-section obs-container">
+        <LatestDiscoveriesPanel compact />
+        <OfflineAssistantNotice />
       </section>
-
-      <LatestDiscoveriesPanel compact />
-
-      <section className="section">
-        <div className="app-container">
-          <div className="mb-6">
-            <div className="eyebrow">Guided Exploration</div>
-            <h2 className="mt-3 text-4xl font-semibold">Evidence-led journeys</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {journeys.map((journey) => (
-              <JourneyPreview key={journey.id} journey={journey} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="app-container">
-          <div className="panel grid gap-6 p-6 md:grid-cols-[1fr_320px] md:items-center md:p-8">
-            <div>
-              <div className="eyebrow">What If Lab</div>
-              <h2 className="mt-3 max-w-3xl text-4xl font-semibold">Hypothetical scenarios with visible assumptions.</h2>
-              <p className="mt-4 max-w-2xl text-[color:var(--muted)]">
-                Explore planetary, stellar, and galaxy-scale premises while keeping model boundaries explicit.
-              </p>
-            </div>
-            <div className="quiet-panel p-5">
-              <FlaskConical aria-hidden="true" size={20} color="var(--accent)" />
-              <div className="mt-4 text-2xl font-semibold">4 scenarios</div>
-              <Link href="/lab" className="button button-primary mt-5 w-full">
-                Open lab
-                <ArrowRight aria-hidden="true" size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+    </div>
   );
 }

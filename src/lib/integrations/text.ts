@@ -6,7 +6,9 @@ export function decodeHtmlEntities(value: string) {
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&#(\d+);/g, (_, code: string) => String.fromCharCode(Number(code)));
+    .replace(/&#(\d+);/g, (_, code: string) =>
+      String.fromCharCode(Number(code)),
+    );
 }
 
 export function htmlToPlainText(value?: string) {
@@ -14,14 +16,15 @@ export function htmlToPlainText(value?: string) {
     return "";
   }
 
-  return decodeHtmlEntities(
-    value
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<a\b[^>]*>(.*?)<\/a>/gi, "$1")
-      .replace(/<[^>]+>/g, "")
-      .replace(/\s+/g, " ")
-      .trim(),
-  );
+  return decodeHtmlEntities(value)
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(
+      /<br\s*\/?>|<\/?(?:p|div|li|ul|ol|h[1-6]|section|article|nav|header|footer|table|tr|td)\b[^>]*>/gi,
+      " ",
+    )
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function truncateText(value: string, maxLength: number) {
@@ -30,4 +33,15 @@ export function truncateText(value: string, maxLength: number) {
   }
 
   return `${value.slice(0, maxLength).trimEnd()}...`;
+}
+
+/** Reject recognizable site chrome instead of presenting it as an article excerpt. */
+export function cleanNewsSummary(value: string) {
+  if (
+    /explore this section|\bAPOD\b.*\b(?:index|calendar|submissions)\b|\bsubmissions\s+index\s+search\b/i.test(
+      value,
+    )
+  )
+    return "";
+  return value.replace(/^\s*\d+\s*min(?:ute)?s?\s+read\s*/i, "").trim();
 }
