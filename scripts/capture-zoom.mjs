@@ -87,12 +87,14 @@ try {
       await Promise.all(
         [...document.images].map((i) => i.decode().catch(() => {})),
       );
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "instant" });
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
     await page.waitForTimeout(200);
     const metrics = await page.evaluate(() => ({
       innerWidth,
       innerHeight,
+      scrollY,
       dpr: devicePixelRatio,
       bodyWidth: document.body.scrollWidth,
       rootWidth: document.documentElement.scrollWidth,
@@ -109,6 +111,7 @@ try {
       `${route}: root overflow at 200%`,
     );
     assert.deepEqual(metrics.brokenImages, []);
+    assert.equal(metrics.scrollY, 0, `${route}: capture must start at page top`);
     // Capture the initial viewport before focus/scroll changes. A fresh tab per
     // route avoids stale compositor tiles when Chromium tab zoom is active.
     const slug = route === "/" ? "home" : route.split("?")[0].slice(1).replaceAll("/", "-");
@@ -161,6 +164,14 @@ try {
       }
     }
     results.push({ route, zoom, metrics });
+    // Chrome's default zoom is origin-scoped, so reset before the next tab.
+    // Otherwise an already-zoomed new tab can yield a stale screenshot clip.
+    await worker.evaluate(async (url) => {
+      const tab = (await chrome.tabs.query({})).find((t) => t.url === url);
+      if (!tab?.id) throw new Error("Local QA tab not found for zoom reset");
+      await chrome.tabs.setZoom(tab.id, 1);
+    }, page.url());
+    await page.waitForFunction(() => innerWidth === 1440 && devicePixelRatio === 1);
     await page.close();
   }
   await writeFile(
@@ -176,7 +187,7 @@ try {
     ),
   );
   console.log(
-    "Actual browser zoom: 200%, 3 pages, reflow and controls passed.",
+    `Actual browser zoom: 200%, ${results.length} pages, reflow and controls passed.`,
   );
 } finally {
   await context.close();
