@@ -285,6 +285,7 @@ export function WhatIfLab({ scenarios }: { scenarios: WhatIfScenario[] }) {
           <a href={source} target="_blank" rel="noreferrer">
             Read the scientific background ↗
           </a>
+          {isMoon && <a href="https://doi.org/10.1016/j.icarus.2011.10.013" target="_blank" rel="noreferrer">Moonless-Earth tilt models · Lissauer et al.</a>}
         </aside>
       </div>
       <OfflineAssistantNotice />

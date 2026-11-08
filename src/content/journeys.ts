@@ -10,11 +10,12 @@ export const journeys: GuidedJourney[] = [
     suggestedQuestion: "Compare the evidence from rotation curves and cluster lensing. What does it tell us about mass, and what does it leave unknown about dark matter?",
     title: "How do we know dark matter exists?",
     summary:
-      "Follow several independent lines of evidence: galaxy rotation, lensing, cluster collisions, and large-scale structure.",
+      "Follow several independent lines of evidence: galaxy rotation, gravitational lensing, and cluster collisions.",
     status: "mvp",
     steps: [
       {
         id: "rotation-curves",
+        evidence: {"observation": "Spectra reveal orbital motion across a galaxy’s disk. Many outer rotation curves remain roughly flat.", "inference": "In Newtonian mass models, the observed luminous matter alone does not explain those outer speeds.", "limitation": "The curves here are schematic. They neither measure the Milky Way nor identify a dark-matter particle."},
         title: "Galaxy rotation curves",
         summary: "Observed orbital speeds stay higher than visible matter alone predicts.",
         objectIds: ["milky-way", "dark-matter"],
@@ -22,6 +23,7 @@ export const journeys: GuidedJourney[] = [
       },
       {
         id: "lensing",
+        evidence: {"observation": "Background objects appear distorted or multiply imaged around foreground mass.", "inference": "A gravitational-lens model can constrain the projected mass along the line of sight.", "limitation": "This point-lens demonstration teaches the geometry. A cluster requires an extended mass distribution and distance information."},
         title: "Gravitational lensing",
         summary: "Mass bends light, allowing astronomers to map matter that is not directly luminous.",
         objectIds: ["bullet-cluster", "dark-matter"],
@@ -29,6 +31,7 @@ export const journeys: GuidedJourney[] = [
       },
       {
         id: "bullet-cluster",
+        evidence: {"observation": "X-ray observations locate hot gas; distorted background galaxies constrain a lensing mass map.", "inference": "In this collision, most of the inferred mass is displaced from the dominant visible baryonic component: hot gas.", "limitation": "The map is reconstructed through a model. It supports a dark-matter interpretation without identifying the material’s microscopic nature."},
         title: "Bullet Cluster",
         summary: "A cluster collision separates hot ordinary gas from the inferred gravitational mass.",
         objectIds: ["bullet-cluster"],
@@ -48,12 +51,14 @@ export const journeys: GuidedJourney[] = [
     steps: [
       {
         id: "stellar-nursery",
+        evidence: {"observation": "Infrared observations reveal embedded young stars and gas structures in stellar nurseries.", "inference": "Gravity can concentrate dense material into protostars; core hydrogen fusion marks the main sequence.", "limitation": "Not every gas cloud collapses. Rotation, turbulence and magnetic fields influence star formation."},
         title: "Birth in nebulae",
         summary: "Dense gas and dust collapse into new stars.",
         objectIds: ["orion-nebula", "eagle-nebula", "carina-nebula"],
       },
       {
         id: "main-sequence",
+        evidence: {"observation": "Stellar spectra and brightness measurements constrain temperature and luminosity.", "inference": "Those properties place stars on an HR diagram; mass strongly shapes their structure and evolution.", "limitation": "This diagram is schematic. The main sequence is not a path every star follows from hot to cool."},
         title: "Long nuclear balance",
         summary: "During the main sequence, pressure gradients support a star against gravity while core hydrogen fusion supplies energy.",
         objectIds: ["sun", "proxima-centauri"],
@@ -61,6 +66,7 @@ export const journeys: GuidedJourney[] = [
       },
       {
         id: "massive-star-death",
+        evidence: {"observation": "The Crab Nebula contains an expanding remnant and a pulsar, evidence of a stellar explosion.", "inference": "Models explain core collapse in massive stars and the formation of compact remnants.", "limitation": "The outcome depends on more than initial mass, including mass loss and binary interaction. Not every collapse produces a bright supernova."},
         title: "Massive-star endings",
         summary: "Massive stars evolve quickly and can end as supernovae.",
         objectIds: ["betelgeuse", "rigel", "crab-nebula", "cygnus-x-1"],
@@ -81,6 +87,7 @@ export const journeys: GuidedJourney[] = [
     steps: [
       {
         id: "distance-velocity",
+        evidence: {"observation": "Galaxy spectral shifts can be compared with independently calibrated distances.", "inference": "A large-scale positive distance–redshift trend supports cosmic expansion.", "limitation": "The six points here are synthetic. Their slope is chosen for teaching, not fitted to observations."},
         title: "Distance versus recession velocity",
         summary: "On large scales, more distant galaxies tend to show larger recession velocities.",
         objectIds: ["virgo-cluster", "m87"],
@@ -88,12 +95,14 @@ export const journeys: GuidedJourney[] = [
       },
       {
         id: "local-motion",
+        evidence: {"observation": "Andromeda’s spectrum is blueshifted: its line-of-sight motion is toward the Milky Way.", "inference": "Gravity can bind nearby systems and dominate over the large-scale expansion trend.", "limitation": "A radial velocity alone is not the full three-dimensional orbit or a precise merger forecast."},
         title: "Local motion still matters",
         summary: "Nearby systems can move toward each other even while the universe expands on larger scales.",
         objectIds: ["andromeda", "milky-way"],
       },
       {
         id: "cosmic-model",
+        evidence: {"observation": "Distance indicators, galaxy surveys and the cosmic microwave background provide different constraints.", "inference": "Cosmological models combine such observations to infer the expansion history and matter content.", "limitation": "Parameter values depend on calibration, data and model assumptions; a straight trend line does not determine the whole history."},
         title: "From observation to model",
         summary: "Expansion history is inferred by combining multiple observations with cosmological models.",
         objectIds: ["dark-matter", "virgo-cluster"],

@@ -1,98 +1,140 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Orbit, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { pointLens } from "@/lib/astronomy/lensing";
 
 export function GravitationalLensingMini() {
-  const [mass, setMass] = useState(64);
-  const [alignment, setAlignment] = useState(44);
-
-  const geometry = useMemo(() => {
-    const ringRadius = 34 + mass * 0.34;
-    const arcOffset = (alignment - 50) * 0.42;
-    const arcSpread = Math.max(18, 62 - Math.abs(alignment - 50) * 0.7);
-
-    return { ringRadius, arcOffset, arcSpread };
-  }, [alignment, mass]);
-
+  const [mass, setMass] = useState(1);
+  const [offset, setOffset] = useState(0.5);
+  const lens = pointLens(mass, offset);
+  const scale = 62;
   return (
-    <div className="panel p-5">
-      <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div>
-          <div className="eyebrow">Scientific Phenomenon</div>
-          <h2 className="mt-2 text-2xl font-semibold">Gravitational lensing</h2>
-          <p className="mt-2 max-w-2xl text-sm text-[color:var(--muted)]">
-            A conceptual lens model showing how foreground mass can distort light from a background source.
-          </p>
-        </div>
-        <span className="confidence mt-0">conceptual model</span>
-      </div>
-
-      <div className="visual-frame h-[300px] p-4">
-        <svg className="h-full w-full" role="img" aria-label="Conceptual gravitational lensing visualization" viewBox="0 0 520 250">
-          <defs>
-            <radialGradient id="lensGradient" cx="50%" cy="50%" r="55%">
-              <stop offset="0%" stopColor="rgba(214,168,95,0.48)" />
-              <stop offset="100%" stopColor="rgba(214,168,95,0.02)" />
-            </radialGradient>
-          </defs>
-          <line x1="52" x2="468" y1="126" y2="126" stroke="rgba(255,255,255,0.16)" strokeDasharray="6 9" />
-          <circle cx="260" cy="126" r={geometry.ringRadius} fill="none" stroke="rgba(121,200,214,0.22)" strokeWidth="1.4" />
-          <circle cx="260" cy="126" r={24 + mass * 0.11} fill="url(#lensGradient)" stroke="rgba(214,168,95,0.64)" />
-          <circle cx="108" cy={126 + geometry.arcOffset} r="9" fill="var(--cyan)" opacity="0.9" />
-          <path
-            d={`M 92 ${126 + geometry.arcOffset} C 170 ${68 - geometry.arcSpread * 0.2}, 350 ${68 - geometry.arcSpread * 0.2}, 428 ${126 - geometry.arcOffset}`}
-            fill="none"
-            stroke="var(--cyan)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            opacity="0.82"
+    <figure className="journey-instrument">
+      <figcaption>
+        <p className="obs-kicker">An idealized point lens</p>
+        <h3>One source. Multiple images.</h3>
+        <p>
+          Apparent positions on the sky, viewed by an observer. This is a model,
+          not a telescope image or a ray-path diagram.
+        </p>
+      </figcaption>
+      <div className="science-chart lens-chart">
+        <svg
+          viewBox="0 0 440 300"
+          role="img"
+          aria-label={
+            offset === 0
+              ? `Aligned source forms an Einstein ring of radius ${lens.einsteinRadius.toFixed(2)} reference angular units`
+              : `Two lensed images at ${lens.negative.toFixed(2)} and ${lens.positive.toFixed(2)} reference angular units`
+          }
+        >
+          <line
+            x1="28"
+            x2="412"
+            y1="150"
+            y2="150"
+            stroke="var(--border-strong)"
           />
-          <path
-            d={`M 92 ${126 + geometry.arcOffset} C 170 ${184 + geometry.arcSpread * 0.2}, 350 ${184 + geometry.arcSpread * 0.2}, 428 ${126 - geometry.arcOffset}`}
-            fill="none"
-            stroke="var(--violet)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            opacity="0.68"
+          <line
+            x1="220"
+            x2="220"
+            y1="24"
+            y2="276"
+            stroke="var(--border-strong)"
           />
-          <circle cx="428" cy={126 - geometry.arcOffset} r="7" fill="var(--violet)" opacity="0.82" />
-          <text x="78" y="228" fill="rgba(255,255,255,0.62)" fontSize="12">background source</text>
-          <text x="226" y="228" fill="rgba(255,255,255,0.62)" fontSize="12">foreground mass</text>
-          <text x="382" y="228" fill="rgba(255,255,255,0.62)" fontSize="12">apparent image</text>
+          <circle
+            cx="220"
+            cy="150"
+            r={lens.einsteinRadius * scale}
+            stroke={offset === 0 ? "var(--cyan)" : "var(--muted-strong)"}
+            strokeDasharray={offset === 0 ? undefined : "4 7"}
+            strokeWidth={offset === 0 ? 4 : 1}
+            fill="none"
+          />
+          <circle cx="220" cy="150" r="7" fill="var(--accent)" />
+          <path
+            d={`M ${220 + offset * scale - 7} 143 l 14 14 m 0 -14 l -14 14`}
+            stroke="var(--foreground)"
+            strokeWidth="2"
+          />
+          {offset !== 0 && (
+            <>
+              <circle
+                cx={220 + lens.positive * scale}
+                cy="150"
+                r="8"
+                fill="var(--cyan)"
+              />
+              <circle
+                cx={220 + lens.negative * scale}
+                cy="150"
+                r="8"
+                fill="var(--cyan)"
+              />
+            </>
+          )}
         </svg>
+        <ul className="instrument-legend">
+          <li>
+            <span className="legend-gold">●</span> Lens center
+          </li>
+          <li>
+            <span>×</span> Unlensed source position
+          </li>
+          <li>
+            <span className="legend-cyan">● / ○</span> Images / aligned ring
+          </li>
+          <li>Dashed circle: Einstein radius</li>
+        </ul>
       </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <label className="quiet-panel p-4">
-          <span className="flex items-center gap-2 text-sm font-semibold">
-            <SlidersHorizontal aria-hidden="true" size={15} color="var(--accent)" />
-            Lens mass
-          </span>
+      <div className="instrument-controls">
+        <label>
+          Lens mass <output>{mass.toFixed(2)} × M₀</output>
           <input
-            className="mt-3 w-full accent-[color:var(--accent)]"
+            aria-label="Lens mass"
             type="range"
-            min="20"
-            max="100"
+            min="0.25"
+            max="3"
+            step="0.25"
             value={mass}
             onChange={(event) => setMass(Number(event.target.value))}
           />
         </label>
-        <label className="quiet-panel p-4">
-          <span className="flex items-center gap-2 text-sm font-semibold">
-            <Orbit aria-hidden="true" size={15} color="var(--cyan)" />
-            Source alignment
-          </span>
+        <label>
+          Source offset <output>{offset.toFixed(2)} θE₀</output>
           <input
-            className="mt-3 w-full accent-[color:var(--cyan)]"
+            aria-label="Source offset"
             type="range"
             min="0"
-            max="100"
-            value={alignment}
-            onChange={(event) => setAlignment(Number(event.target.value))}
+            max="2"
+            step="0.1"
+            value={offset}
+            onChange={(event) => setOffset(Number(event.target.value))}
           />
         </label>
       </div>
-    </div>
+      <p className="instrument-reading" aria-live="polite">
+        {offset === 0
+          ? `Exact alignment: a ring with radius ${lens.einsteinRadius.toFixed(2)} θE₀.`
+          : `Image positions: ${lens.negative.toFixed(2)} and +${lens.positive.toFixed(2)} θE₀ relative to the lens.`}
+      </p>
+      <details className="instrument-assumptions">
+        <summary>Model assumptions</summary>
+        <p>
+          Fixed distances, a point source and an isolated point mass. θE₀ is the
+          angular Einstein radius at mass M₀; θE = √(M/M₀) θE₀. Image positions
+          solve β = θ − (M/M₀)/θ in these units. Marker sizes do not represent
+          brightness, mass radius or magnification. Real cluster lenses need
+          extended mass models.
+        </p>
+        <a
+          href="https://astronomy.swin.edu.au/cosmos/S/Schwarzschild+Lens"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Swinburne Astronomy: point-lens equations
+        </a>
+      </details>
+    </figure>
   );
 }

@@ -67,7 +67,7 @@ try {
   const worker =
     context.serviceWorkers()[0] ||
     (await context.waitForEvent("serviceworker"));
-  for (const route of ["/", "/lab", "/atlas"]) {
+  for (const route of (process.env.CAPTURE_ROUTES?.split(",") || ["/", "/lab", "/atlas"])) {
     const page = await context.newPage();
     await page.goto(base + route);
     await page.locator("h1").waitFor();
@@ -87,12 +87,14 @@ try {
       await Promise.all(
         [...document.images].map((i) => i.decode().catch(() => {})),
       );
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "instant" });
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
     await page.waitForTimeout(200);
     const metrics = await page.evaluate(() => ({
       innerWidth,
       innerHeight,
+      scrollY,
       dpr: devicePixelRatio,
       bodyWidth: document.body.scrollWidth,
       rootWidth: document.documentElement.scrollWidth,
@@ -109,9 +111,10 @@ try {
       `${route}: root overflow at 200%`,
     );
     assert.deepEqual(metrics.brokenImages, []);
+    assert.equal(metrics.scrollY, 0, `${route}: capture must start at page top`);
     // Capture the initial viewport before focus/scroll changes. A fresh tab per
     // route avoids stale compositor tiles when Chromium tab zoom is active.
-    const slug = route === "/" ? "home" : route.slice(1);
+    const slug = route === "/" ? "home" : route.split("?")[0].slice(1).replaceAll("/", "-");
     await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
     // Controls remain reachable and operable after reflow, even below the fold.
     if (route === "/atlas") {
@@ -136,7 +139,39 @@ try {
       await page.keyboard.press("Home");
       for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
     }
+    if (route.startsWith("/compare")) {
+      await page.getByLabel("Primary object").selectOption("europa");
+      await page.getByLabel("Comparison object").selectOption("enceladus");
+      const table = page.getByRole("table");
+      assert.ok(await table.evaluate((el) => el.scrollWidth <= el.clientWidth + 1));
+      assert.ok((await table.innerText()).includes("3,122"));
+      assert.ok((await table.innerText()).includes("about 500"));
+    }
+    if (route === "/my-cosmos") {
+      await page.getByLabel("Note title", { exact: true }).fill("Zoom QA");
+      await page.getByLabel("Note body", { exact: true }).fill("Readable at 200 percent.");
+      await page.getByRole("button", { name: "Add note" }).click();
+      await page.getByRole("button", { name: "Remove note Zoom QA", exact: true }).click();
+      await page.getByRole("button", { name: "Undo removal" }).click();
+      assert.ok((await page.locator("#journal-notes").innerText()).includes("Readable at 200 percent."));
+    }
+    if (route.includes("/journeys/")) {
+      await page.getByRole("link", { name: "Start journey", exact: true }).click();
+      assert.equal(await page.getByText("Visualization planned").count(), 0);
+      for (const slider of await page.getByRole("slider").all()) {
+        await slider.focus(); await page.keyboard.press("End");
+        assert.equal(await slider.inputValue(), await slider.getAttribute("max"));
+      }
+    }
     results.push({ route, zoom, metrics });
+    // Chrome's default zoom is origin-scoped, so reset before the next tab.
+    // Otherwise an already-zoomed new tab can yield a stale screenshot clip.
+    await worker.evaluate(async (url) => {
+      const tab = (await chrome.tabs.query({})).find((t) => t.url === url);
+      if (!tab?.id) throw new Error("Local QA tab not found for zoom reset");
+      await chrome.tabs.setZoom(tab.id, 1);
+    }, page.url());
+    await page.waitForFunction(() => innerWidth === 1440 && devicePixelRatio === 1);
     await page.close();
   }
   await writeFile(
@@ -152,7 +187,7 @@ try {
     ),
   );
   console.log(
-    "Actual browser zoom: 200%, 3 pages, reflow and controls passed.",
+    `Actual browser zoom: 200%, ${results.length} pages, reflow and controls passed.`,
   );
 } finally {
   await context.close();

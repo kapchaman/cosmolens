@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { chromium } from "playwright-core";
 import { mkdir, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -54,7 +55,7 @@ for (const [width, height] of sizes) {
     }),
   );
   const page = await context.newPage();
-  for (const route of ["/", "/lab", "/atlas"]) {
+  for (const route of (process.env.CAPTURE_ROUTES?.split(",") || ["/", "/lab", "/atlas"])) {
     const errors = [];
     const listener = (e) => errors.push(e.message);
     page.on("pageerror", listener);
@@ -70,7 +71,7 @@ for (const [width, height] of sizes) {
       window.scrollTo({ top: 0, behavior: "instant" });
     });
     await page.waitForTimeout(200);
-    const slug = route === "/" ? "home" : route.slice(1);
+    const slug = route === "/" ? "home" : route.split("?")[0].slice(1).replaceAll("/", "-");
     const prefix = `${slug}-${width}x${height}`;
     await page.screenshot({
       path: `${out}/${prefix}-view.png`,
@@ -89,6 +90,11 @@ for (const [width, height] of sizes) {
         .filter((i) => !i.complete || !i.naturalWidth)
         .map((i) => i.getAttribute("src")),
     }));
+    if (phase === "after") {
+      assert.ok(metrics.body <= width + 1 && metrics.main <= width + 1, `${route} overflows at ${width}`);
+      assert.deepEqual(metrics.brokenImages, [], `${route} has broken images`);
+      assert.deepEqual(errors, [], `${route} has browser errors`);
+    }
     results.push({
       route,
       width,
@@ -110,6 +116,7 @@ await writeFile(
       commit: execFileSync("git", ["rev-parse", "HEAD"], {
         encoding: "utf8",
       }).trim(),
+      workingTreeChanges: execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim(),
       capturedAt: new Date().toISOString(),
       browser: "Chromium",
       feeds: "deterministic fallback fixtures",

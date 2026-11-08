@@ -17,6 +17,7 @@ const noteSchema = z.object({
   title: z.string().trim().min(1).max(200),
   body: z.string().trim().min(1).max(20000),
   createdAt: z.string().datetime(),
+  removedAt: z.string().datetime().optional(),
 });
 
 // localStorage is untrusted input, including syntactically valid JSON.
@@ -50,8 +51,9 @@ export function readSavedObjects(): SavedCosmosObject[] {
 export function writeSavedObjects(objects: SavedCosmosObject[]) {
   writeJson(savedObjectsKey, z.array(savedObjectSchema).parse(objects));
 }
-export function readCosmosNotes(): CosmosNote[] {
-  return readRecords(cosmosNotesKey, noteSchema);
+export function readCosmosNotes(includeRemoved = false): CosmosNote[] {
+  const notes = readRecords(cosmosNotesKey, noteSchema);
+  return includeRemoved ? notes : notes.filter((note) => !note.removedAt);
 }
 export function writeCosmosNotes(notes: CosmosNote[]) {
   writeJson(cosmosNotesKey, z.array(noteSchema).parse(notes));

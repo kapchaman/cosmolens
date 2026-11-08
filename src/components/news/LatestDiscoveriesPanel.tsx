@@ -24,9 +24,11 @@ function formatDate(value: string | null) {
 export function LatestDiscoveriesPanel({
   compact = false,
   showOpenLink = true,
+  showHeading = true,
 }: {
   compact?: boolean;
   showOpenLink?: boolean;
+  showHeading?: boolean;
 }) {
   const [state, setState] = useState<NewsState>({ status: "loading" });
 
@@ -65,9 +67,9 @@ export function LatestDiscoveriesPanel({
   }, [attempt]);
 
   return (
-    <section className={compact ? "" : "section"} id="discoveries">
+    <section className={compact ? "" : "section"} id="discoveries" aria-label="Official source updates">
       <div className={compact ? "" : "app-container"}>
-        <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        {showHeading && <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <div className="eyebrow">Latest Discoveries</div>
             <h2 className="mt-3 max-w-3xl text-4xl font-semibold">
@@ -79,7 +81,7 @@ export function LatestDiscoveriesPanel({
               Open feed
             </a>
           ) : null}
-        </div>
+        </div>}
 
         {state.status === "loading" ? (
           <div

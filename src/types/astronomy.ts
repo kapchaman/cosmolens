@@ -97,6 +97,7 @@ export type CosmicScaleNode = {
 };
 
 export type GuidedJourneyStep = {
+  evidence: { observation: string; inference: string; limitation: string };
   id: string;
   title: string;
   summary: string;

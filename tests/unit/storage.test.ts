@@ -25,3 +25,15 @@ test("blocked storage reads recover but failed writes remain observable", () => 
   expect(() => writeCosmosNotes([note])).toThrow("Storage blocked");
 });
 test("valid writes round trip", () => { writeCosmosNotes([note]); expect(readCosmosNotes()).toEqual([note]); });
+
+test("removed notes survive reload and restore without losing their original content", () => {
+  const removed = { ...note, removedAt: "2026-11-08T00:00:00.000Z" };
+  writeCosmosNotes([removed]);
+  expect(readCosmosNotes()).toEqual([]);
+  expect(readCosmosNotes(true)).toEqual([removed]);
+  writeCosmosNotes([{ ...note, id: "n2" }, ...readCosmosNotes(true)]);
+  expect(readCosmosNotes(true)).toHaveLength(2);
+  const restored = readCosmosNotes(true).map(({ removedAt: _removedAt, ...entry }) => entry);
+  writeCosmosNotes(restored);
+  expect(readCosmosNotes()).toContainEqual(note);
+});

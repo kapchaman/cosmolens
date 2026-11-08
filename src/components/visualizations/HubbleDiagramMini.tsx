@@ -1,91 +1,122 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Activity, Eye, EyeOff } from "lucide-react";
-
-const points = [
-  { distance: 18, velocity: 1220, label: "nearby group" },
-  { distance: 42, velocity: 3050, label: "galaxy sample" },
-  { distance: 78, velocity: 5200, label: "cluster field" },
-  { distance: 118, velocity: 8500, label: "distant cluster" },
-  { distance: 156, velocity: 11200, label: "deep field" },
-  { distance: 194, velocity: 13700, label: "survey point" },
-];
-
-function x(distance: number) {
-  return 44 + distance * 2.2;
-}
-
-function y(velocity: number) {
-  return 196 - velocity * 0.011;
-}
+import { useState } from "react";
+const distances = [18, 42, 78, 118, 156, 194];
+const x = (distance: number) => 24 + distance * 2.2;
+const y = (velocity: number) => 220 - velocity / 75;
 
 export function HubbleDiagramMini() {
   const [showTrend, setShowTrend] = useState(true);
-  const [scatter, setScatter] = useState(28);
-
-  const plotted = useMemo(
-    () =>
-      points.map((point, index) => ({
-        ...point,
-        y: y(point.velocity + ((index % 2 === 0 ? 1 : -1) * scatter * 32)),
-      })),
-    [scatter],
-  );
-
+  const [scatter, setScatter] = useState(500);
   return (
-    <div className="panel p-5">
-      <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div>
-          <div className="eyebrow">Scientific Phenomenon</div>
-          <h2 className="mt-2 text-2xl font-semibold">Hubble-Lemaitre diagram</h2>
-          <p className="mt-2 max-w-2xl text-sm text-[color:var(--muted)]">
-            Synthetic points illustrate the low-redshift distance–recession relation. They are not survey measurements or a fit to the Hubble constant. Real observations require calibration and uncertainty analysis.
-          </p>
+    <figure className="journey-instrument">
+      <figcaption>
+        <p className="obs-kicker">Synthetic experiment</p>
+        <h3>The distance–velocity relation</h3>
+        <p>
+          Six invented points illustrate a low-redshift expansion trend. These
+          are not survey observations or an estimate of today’s Hubble constant.
+        </p>
+      </figcaption>
+      <div className="science-chart">
+        <p className="science-axis">Recession velocity ↑ · km/s</p>
+        <div className="calibrated-plot">
+          <div className="plot-area">
+            <div className="plot-y-ticks">
+              <span>15,000</span>
+              <span>7,500</span>
+              <span>0</span>
+            </div>
+            <svg
+              role="img"
+              aria-label={`Synthetic distance–velocity diagram, illustrative scatter plus or minus ${scatter} kilometers per second`}
+              viewBox="0 0 480 240"
+            >
+              {[0, 7500, 15000].map((v) => (
+                <line
+                  key={v}
+                  x1="24"
+                  x2="464"
+                  y1={y(v)}
+                  y2={y(v)}
+                  stroke="var(--border-strong)"
+                />
+              ))}
+              <line
+                x1="24"
+                x2="24"
+                y1="20"
+                y2="220"
+                stroke="var(--muted-strong)"
+              />
+              {showTrend && (
+                <path
+                  d={`M ${x(0)} ${y(0)} L ${x(200)} ${y(14000)}`}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="3"
+                  strokeDasharray="8 6"
+                />
+              )}
+              {distances.map((distance, index) => (
+                <circle
+                  key={distance}
+                  cx={x(distance)}
+                  cy={y(70 * distance + (index % 2 ? -scatter : scatter))}
+                  r="6"
+                  fill="var(--cyan)"
+                />
+              ))}
+            </svg>
+          </div>
+          <div className="plot-x-ticks">
+            <span>0</span>
+            <span>100</span>
+            <span>200</span>
+          </div>
         </div>
-        <button className="button button-ghost min-h-9 px-3 text-sm" type="button" aria-pressed={showTrend} onClick={() => setShowTrend((value) => !value)}>
-          {showTrend ? <Eye aria-hidden="true" size={15} /> : <EyeOff aria-hidden="true" size={15} />}
-          Expansion trend
-        </button>
+        <p className="science-axis science-axis-x">Distance → · Mpc</p>
+        <ul className="instrument-legend">
+          <li>
+            <span className="legend-cyan">●</span> Synthetic points
+          </li>
+          <li>
+            <span className="legend-gold">┄</span> v = H₀d, H₀ = 70 km/s/Mpc
+            (illustrative)
+          </li>
+        </ul>
       </div>
-
-      <div className="visual-frame h-[300px] p-5">
-        <svg className="h-full w-full" role="img" aria-label="Conceptual Hubble diagram" viewBox="0 0 520 240">
-          <line x1="44" x2="486" y1="196" y2="196" stroke="rgba(255,255,255,0.28)" />
-          <line x1="44" x2="44" y1="28" y2="196" stroke="rgba(255,255,255,0.28)" />
-          <text x="44" y="224" fill="rgba(255,255,255,0.62)" fontSize="12">distance</text>
-          <text x="0" y="24" fill="rgba(255,255,255,0.62)" fontSize="12">recession velocity</text>
-          {showTrend ? (
-            <path d="M 54 186 L 474 42" fill="none" stroke="var(--accent)" strokeWidth="3" strokeDasharray="9 8" />
-          ) : null}
-          {plotted.map((point) => (
-            <g key={point.label}>
-              <circle cx={x(point.distance)} cy={point.y} r="6" fill="var(--cyan)" opacity="0.9" />
-              <circle cx={x(point.distance)} cy={point.y} r="14" fill="none" stroke="rgba(121,200,214,0.16)" />
-            </g>
-          ))}
-        </svg>
-      </div>
-
-      <div className="mt-5 grid gap-4 md:grid-cols-[1fr_1.2fr]">
-        <label className="quiet-panel p-4">
-          <span className="flex items-center gap-2 text-sm font-semibold">
-            <Activity aria-hidden="true" size={15} color="var(--cyan)" />
-            Illustrative scatter
-          </span>
+      <div className="instrument-controls">
+        <label>
+          Illustrative scatter <output>±{scatter} km/s</output>
           <input
-            className="mt-3 w-full accent-[color:var(--cyan)]"
+            aria-label="Illustrative scatter"
             type="range"
             min="0"
-            max="60"
+            max="1000"
+            step="50"
             value={scatter}
             onChange={(event) => setScatter(Number(event.target.value))}
           />
         </label>
-        <div className="quiet-panel p-4 text-sm text-[color:var(--muted)]">
-          The positive trend is evidence for expansion, but interpreting the expansion history requires additional observations and cosmological models.
-        </div>
+        <button
+          className="button button-ghost"
+          type="button"
+          aria-pressed={showTrend}
+          onClick={() => setShowTrend((value) => !value)}
+        >
+          Expansion trend {showTrend ? "on" : "off"}
+        </button>
       </div>
-    </div>
+      <p className="instrument-reading" aria-live="polite">
+        At 100 Mpc, this chosen trend gives 7,000 km/s. Changing scatter moves
+        the points, not the trend.
+      </p>
+      <p className="instrument-limit">
+        The alternating offsets are a teaching device, not error bars or
+        measured peculiar velocities. Calibrated distances and cosmological
+        models are needed to infer expansion history.
+      </p>
+    </figure>
   );
 }

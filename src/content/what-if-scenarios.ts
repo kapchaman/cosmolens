@@ -51,12 +51,12 @@ export const whatIfScenarios: WhatIfScenario[] = [
       },
       {
         label: "Axial stability",
-        body: "The Moon helps stabilize Earth's axial tilt over long timescales. Without it, climate variability could become more chaotic over geological time.",
+        body: "Removing the Moon changes Earth’s spin-axis dynamics. Long-term tilt variations depend on the initial rotation and orbit; a moonless Earth does not automatically imply extreme climate instability.",
         integrity: "modeled-consequence",
       },
       {
         label: "Night environment",
-        body: "Moonlit nights, eclipses, and many ecological light cues would disappear, but stars and planets would become more visible.",
+        body: "Moonlit nights and eclipses involving the Moon would disappear. Faint objects would be easier to see on formerly moonlit nights; weather and light pollution would still matter.",
         integrity: "established-physics",
       },
     ],

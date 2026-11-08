@@ -51,4 +51,14 @@ AI is not required for the first public release. A zero-budget content release w
 - PR #8: sourced scientific corrections and catalog integrity; remaining editorial scope is explicit.
 - PR #9: indexing, privacy, headers, health and current deployment/runbook documentation.
 
-PRs are stacked and no changes have been merged to main. The critical remaining work for November 13 is review/merge, host identification, manual accessibility/science checks and an approved deployment rehearsal. Full authenticated AI integration is a separate project gate and should not consume the content release's remaining time unless its prerequisites become available.
+Historical note: PRs #4–9 were initially stacked. By 2026-11-08 they are in main (`f30d536`). PR #10 (Living Observatory) is open and unmerged; the audit-completion continuation is a separate branch based on its head, with no merge or deployment performed. The critical remaining work for November 13 is review/merge, host identification, manual accessibility/science checks and an approved deployment rehearsal. Full authenticated AI integration is a separate project gate and should not consume the content release's remaining time unless its prerequisites become available.
+
+
+## Current checkpoint — 2026-11-08
+
+- Reliability, automated CI, disabled-AI protection foundation, scientific catalog integrity and deployment-runbook phases are already in main; do not repeat those completed implementation phases.
+- PR #10 provides the reviewed Home/Lab/Atlas prototype and first A01–A19 response. Continuation branch `feat/observatory-completion-20261108` is stacked on its `4e09f73` head, preserving the founder's no-merge constraint.
+- Remaining audit implementation is now covered: Compare task flow/field definitions, persistent journal labels and recoverable note deletion, Journey navigation/evidence/plots, compact unavailable AI and a single Discoveries introduction. See `docs/observatory/COMPLETION_REPORT.md` for verification and limitations.
+- Release maintenance found production dependency advisories; Next 16.4.5 and Zod 4.6.7 replace vulnerable installed versions, with production npm audit added to CI. No provider, credential or paid endpoint was enabled.
+- Source-backed editorial clarification covers the thought experiments and planner limitations. Independent human scientific/accessibility review remains open.
+- The next external gate is founder review of the two PRs and selection of host/project/approved URL, followed by a separately authorized deployment rehearsal. There is no actual public release, host choice, field-performance result or human sign-off to record yet.

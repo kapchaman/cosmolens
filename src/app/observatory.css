@@ -493,7 +493,9 @@
     overflow-wrap: anywhere;
   }
   .obs-readout .obs-readout-hint {
-    font: 400 0.75rem/1.6 var(--font-inter), sans-serif;
+    font:
+      400 0.75rem/1.6 var(--font-inter),
+      sans-serif;
     color: var(--muted);
     margin-top: 8px;
   }
@@ -1527,5 +1529,770 @@
     .lab-fixed-radius p {
       font-size: 0.75rem;
     }
+  }
+}
+
+@layer components {
+  /* Secondary workspaces use the same observatory tokens and reading rhythm. */
+  .workspace-section {
+    padding: 44px 0 80px;
+  }
+  .workspace-heading {
+    max-width: 850px;
+    margin-bottom: 28px;
+  }
+  .workspace-heading h1 {
+    margin: 10px 0 14px;
+    font-family: var(--font-space), sans-serif;
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+  .workspace-heading > p {
+    color: var(--muted);
+    max-width: 66ch;
+  }
+  .comparison-workspace,
+  .journal-workspace {
+    min-width: 0;
+  }
+  .comparison-selectors {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    gap: 20px;
+    padding: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+  }
+  .comparison-selectors > svg {
+    color: var(--cyan);
+    align-self: center;
+    margin-top: 24px;
+  }
+  .comparison-selectors label {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .comparison-selectors select {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    background: var(--background);
+    border: 1px solid var(--border-strong);
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  .comparison-data {
+    margin-top: 28px;
+  }
+  .comparison-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .comparison-heading h2,
+  .comparison-context h2,
+  .comparison-relationships h2,
+  .journal-workspace h2 {
+    font-family: var(--font-space), sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  .comparison-heading > span {
+    color: var(--cyan);
+    font-size: 0.875rem;
+  }
+  .comparison-help {
+    max-width: 85ch;
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 12px 0 20px;
+  }
+  .comparison-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .comparison-property-column {
+    width: 24%;
+  }
+  .comparison-table th,
+  .comparison-table td {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+  .comparison-table thead {
+    background: var(--surface-strong);
+  }
+  .comparison-table thead th {
+    font-weight: 600;
+  }
+  .comparison-table th a {
+    color: var(--cyan);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .comparison-table th a svg,
+  .comparison-context h2 svg,
+  .journal-entry h3 svg {
+    display: inline;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .comparison-table tbody th {
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .comparison-table td + td {
+    border-left: 1px solid var(--border);
+  }
+  .comparison-value {
+    font-family: var(--font-science), monospace;
+    font-size: 1.15rem;
+  }
+  .comparison-value > span {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .comparison-qualifier,
+  .comparison-missing {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-top: 8px;
+  }
+  .comparison-sources {
+    margin-top: 12px;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .comparison-sources summary {
+    cursor: pointer;
+    color: var(--cyan);
+    padding: 8px 0;
+    min-height: 44px;
+  }
+  .comparison-sources p {
+    margin-bottom: 12px;
+  }
+  .comparison-sources a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .comparison-sources li + li {
+    margin-top: 8px;
+  }
+  .comparison-context {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-context h2 {
+    margin: 8px 0 12px;
+  }
+  .comparison-context p:not(.obs-kicker) {
+    color: var(--muted);
+  }
+  .comparison-relationships {
+    padding: 32px 0;
+  }
+  .comparison-relationships h2 {
+    margin: 8px 0 12px;
+  }
+  .comparison-relationships > p:not(.obs-kicker) {
+    color: var(--muted);
+    max-width: 85ch;
+  }
+  .journal-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .journal-privacy {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 16px 0 28px;
+    max-width: 75ch;
+  }
+  .journal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 40px;
+    align-items: start;
+  }
+  .journal-composer {
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+  }
+  .journal-workspace h2 {
+    margin: 8px 0 24px;
+  }
+  .journal-composer form {
+    display: grid;
+    gap: 10px;
+  }
+  .journal-composer label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .journal-composer input,
+  .journal-composer textarea {
+    min-width: 0;
+    width: 100%;
+    background: var(--background);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .journal-composer input {
+    min-height: 48px;
+    margin-bottom: 10px;
+  }
+  .journal-composer textarea {
+    min-height: 140px;
+    resize: vertical;
+    margin-bottom: 8px;
+  }
+  .journal-composer ::placeholder {
+    color: var(--muted-strong);
+  }
+  .journal-feedback {
+    padding: 16px;
+    border: 1px solid var(--cyan);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .journal-empty {
+    color: var(--muted);
+    padding: 24px 0;
+    border-block: 1px solid var(--border);
+  }
+  .journal-empty a {
+    color: var(--cyan);
+    text-decoration: underline;
+  }
+  .journal-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .journal-entry > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .journal-entry h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .journal-entry p:not(.tiny-label) {
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .journal-entry button {
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+  }
+  .journal-removed-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .journal-note-body {
+    white-space: pre-wrap;
+  }
+  .journal-notes {
+    margin-top: 40px;
+  }
+  .journal-notes h2 span {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .journal-removed {
+    margin-top: 32px;
+    border: 1px solid var(--border-strong);
+    padding: 20px;
+  }
+  .journal-removed > summary {
+    cursor: pointer;
+    min-height: 44px;
+    color: var(--cyan);
+  }
+  .journal-removed > p {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .journal-workspace [id],
+  .journey-step {
+    scroll-margin-top: 100px;
+  }
+  @media (max-width: 767px) {
+    .workspace-section {
+      padding: 26px 0 48px;
+    }
+    .workspace-heading {
+      margin-bottom: 20px;
+    }
+    .workspace-heading h1 {
+      font-size: 2rem;
+    }
+    .workspace-heading > p {
+      font-size: 0.9375rem;
+    }
+    .comparison-selectors {
+      gap: 12px;
+      padding: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .comparison-selectors > svg {
+      display: none;
+    }
+    .comparison-selectors .tiny-label {
+      font-size: 0.6875rem;
+      letter-spacing: 0.03em;
+    }
+    .comparison-selectors select {
+      padding: 8px;
+      font-size: 0.875rem;
+    }
+    .comparison-heading {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: 14px 8px;
+    }
+    .comparison-table thead th {
+      font-size: 0.875rem;
+    }
+    .comparison-property-column {
+      width: 25%;
+    }
+    .comparison-value {
+      font-size: 1rem;
+    }
+    .comparison-sources,
+    .comparison-qualifier,
+    .comparison-missing,
+    .comparison-table tbody th {
+      font-size: 0.8125rem;
+    }
+    .comparison-context {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+    .journal-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    .journal-composer {
+      padding: 20px;
+    }
+    .journal-navigation .button {
+      font-size: 0.875rem;
+      padding: 10px 12px;
+    }
+    .journal-entry {
+      gap: 10px;
+    }
+    .journal-removed .journal-entry {
+      flex-direction: column;
+    }
+  }
+}
+
+@layer components {
+  .journey-back {
+    color: var(--muted);
+    font-size: 0.875rem;
+    display: inline-block;
+    margin-bottom: 22px;
+    padding-block: 6px;
+  }
+  .journey-header {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: 48px;
+    margin-bottom: 28px;
+    align-items: end;
+  }
+  .journey-header .workspace-heading {
+    margin: 0;
+  }
+  .journey-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .journey-header nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 0;
+    min-height: 48px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9375rem;
+  }
+  .journey-header nav span,
+  .journey-number {
+    color: var(--cyan);
+    font-family: var(--font-science), monospace;
+  }
+  .journey-header nav svg {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .journey-step {
+    border-top: 1px solid var(--border-strong);
+    padding: 40px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 40px;
+  }
+  .journey-step-copy h2,
+  .journey-conclusion h2 {
+    font-family: var(--font-space), sans-serif;
+    font-size: clamp(1.6rem, 2.5vw, 2rem);
+    line-height: 1.2;
+    margin: 12px 0 16px;
+  }
+  .journey-step-copy > p:not(.obs-kicker),
+  .journey-conclusion > p:not(.obs-kicker) {
+    color: var(--muted);
+  }
+  .journey-step-copy {
+    min-width: 0;
+  }
+  .journey-evidence {
+    display: grid;
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .journey-evidence dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .journey-evidence dd {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .journey-evidence-board {
+    background: var(--surface);
+    border-left: 2px solid var(--cyan);
+    padding: 28px;
+  }
+  .journey-evidence-board .journey-evidence {
+    margin-top: 24px;
+  }
+  .journey-related {
+    margin-top: 28px;
+  }
+  .journey-related p {
+    margin-bottom: 8px;
+  }
+  .journey-related a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--foreground);
+    padding: 8px 12px 8px 0;
+    min-height: 44px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .journey-conclusion {
+    max-width: 850px;
+    padding: 28px 0;
+  }
+  .journey-conclusion .button {
+    margin-top: 24px;
+  }
+  .journey-sources {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-block: 1px solid var(--border);
+  }
+  .journey-sources summary {
+    cursor: pointer;
+    padding: 8px 0;
+    min-height: 44px;
+    color: var(--cyan);
+  }
+  .journey-sources li {
+    margin: 14px 0;
+    color: var(--muted);
+  }
+  .journey-sources a {
+    text-decoration: underline;
+  }
+  .journey-directory article {
+    border-top: 1px solid var(--border-strong);
+    padding: 32px 0;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 24px;
+  }
+  .journey-number {
+    font-size: 1.5rem;
+  }
+  .journey-directory h2 {
+    font-family: var(--font-space), sans-serif;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  .journey-directory p {
+    color: var(--muted);
+    max-width: 65ch;
+    margin: 14px 0;
+  }
+  .journey-directory details {
+    font-size: 0.9375rem;
+  }
+  .journey-directory summary {
+    cursor: pointer;
+    color: var(--cyan);
+    padding: 8px 0;
+    min-height: 44px;
+  }
+  .journey-directory ol {
+    list-style: decimal;
+    padding-left: 22px;
+    color: var(--muted);
+  }
+  .journey-directory li {
+    padding: 6px 0;
+  }
+  .journey-instrument {
+    background: var(--surface);
+    padding: 24px;
+    border: 1px solid var(--border-strong);
+    min-width: 0;
+  }
+  .journey-instrument h3 {
+    font-family: var(--font-space), sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 8px 0 12px;
+  }
+  .journey-instrument figcaption > p:not(.obs-kicker) {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .journey-instrument .science-chart {
+    margin-top: 24px;
+  }
+  .instrument-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .legend-gold {
+    color: var(--accent);
+  }
+  .legend-cyan {
+    color: var(--cyan);
+  }
+  .instrument-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .instrument-controls label {
+    display: block;
+    flex: 1 1 180px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .instrument-controls output {
+    color: var(--cyan);
+    font-family: var(--font-science), monospace;
+    display: block;
+    margin-top: 6px;
+  }
+  .instrument-controls input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    accent-color: var(--cyan);
+  }
+  .instrument-reading {
+    color: var(--foreground);
+    font-size: 0.9375rem;
+    margin-top: 16px;
+  }
+  .instrument-limit,
+  .instrument-assumptions {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .instrument-assumptions summary {
+    cursor: pointer;
+    color: var(--cyan);
+    min-height: 44px;
+    padding: 10px 0;
+  }
+  .instrument-assumptions a {
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 12px;
+  }
+  .instrument-axis-pair {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .instrument-star-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .instrument-star-controls button {
+    min-height: 44px;
+    font-size: 0.875rem;
+    padding: 10px 12px;
+  }
+  .calibrated-plot {
+    position: relative;
+    padding-left: 48px;
+  }
+  .plot-y-ticks {
+    position: absolute;
+    top: 8.3%;
+    bottom: 8.3%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-family: var(--font-science), monospace;
+    color: var(--muted);
+  }
+  .plot-x-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 5% 3.3%;
+    color: var(--muted);
+    font:
+      0.75rem var(--font-science),
+      monospace;
+  }
+  @media (max-width: 1100px) {
+    .journey-header {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+    .journey-step {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    .journey-step-copy > .journey-evidence {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .journey-step-visual {
+      max-width: 780px;
+      width: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .journey-header {
+      gap: 20px;
+    }
+    .journey-header nav a {
+      padding: 12px 0;
+    }
+    .journey-actions {
+      gap: 10px;
+    }
+    .journey-actions .button {
+      font-size: 0.875rem;
+    }
+    .journey-step {
+      padding: 28px 0;
+    }
+    .journey-step-copy > .journey-evidence {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+    .journey-instrument,
+    .journey-evidence-board {
+      padding: 16px;
+    }
+    .journey-instrument .science-chart {
+      padding: 12px;
+    }
+    .journey-directory article {
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 16px;
+      padding: 24px 0;
+    }
+    .journey-directory article > .button {
+      grid-column: 2;
+      justify-self: start;
+    }
+    .journey-directory h2 {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@layer components {
+  .journey-instrument .science-chart svg {
+    aspect-ratio: auto;
+  }
+  .lens-chart svg {
+    max-width: 440px;
+    margin-inline: auto;
+  }
+  .plot-area {
+    position: relative;
+  }
+  .plot-y-ticks {
+    left: -48px;
+  }
+  .plot-y-ticks span {
+    position: absolute;
+    left: 0;
+    transform: translateY(-50%);
+  }
+  .plot-y-ticks span:nth-child(1) {
+    top: 0;
+  }
+  .plot-y-ticks span:nth-child(2) {
+    top: 50%;
+  }
+  .plot-y-ticks span:nth-child(3) {
+    top: 100%;
   }
 }
