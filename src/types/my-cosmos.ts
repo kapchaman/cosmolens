@@ -13,4 +13,5 @@ export type CosmosNote = {
   title: string;
   body: string;
   createdAt: string;
+  removedAt?: string;
 };

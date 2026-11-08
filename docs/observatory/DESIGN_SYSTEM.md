@@ -1,6 +1,6 @@
 # CosmoLens 2.0 — The Living Observatory
 
-Prototype scope: Home, Lab and Atlas. The direction combines observed astronomy, a quiet scientific instrument and editorial reading. Existing object, comparison, journey, planner and personal pages retain their workflows; shared shell, typography and contrast improvements apply throughout.
+Initial prototype scope: Home, Lab and Atlas. November 8 continuation: Compare, My Cosmos, Journeys and compact Discoveries/AI states. The direction combines observed astronomy, a quiet scientific instrument and editorial reading. Existing object, comparison, journey, planner and personal pages retain their workflows; shared shell, typography and contrast improvements apply throughout.
 
 ## Foundations
 
@@ -51,3 +51,11 @@ Keyboard focus is visible, toggles expose `aria-pressed`, selectors and inputs h
 ## Extending the prototype
 
 Use the existing catalog/source model; do not duplicate scientific data inside presentation components. Add image provenance to `observatory-media.ts` and [ASSETS.md](ASSETS.md). Prefer a useful data record over invented photography. Carry this visual language into remaining routes only in a separate reviewed phase. See [audit traceability](AUDIT_TRACEABILITY.md) for the exact boundary.
+
+## Secondary workspaces — November 8
+
+The same Space Grotesk / Inter / IBM Plex Mono stack and tokens now carry the remaining audit flows. `.workspace-heading` keeps introductions short enough for primary actions to enter the mobile viewport. Comparisons use a real three-column table, not a horizontally scrolling desktop canvas; source disclosures keep qualifiers reachable without dominating the scan. Context is placed after measurements.
+
+The journal is a field notebook: composer first, personal atlas alongside on desktop, observation log below. Persistent labels remain visible after typing. Removed notes are recoverable on the device after reload; a separate native confirmation protects permanent deletion. Feedback is announced, focus moves to Undo after removal and returns to the composer after restoration.
+
+Journey pages pair a numbered editorial narrative with an instrument or evidence ledger. At 1100 px and below the instrument gets the full available width. SVGs carry geometry only; HTML carries axes, units, legends and controls. The main-sequence band and Einstein ring have scientific meanings; generic orbit decorations are absent. Every evidence step distinguishes observation, inference and limitation. Shared unavailable-AI panels use one compact notice and an atlas link.

@@ -1,46 +1,50 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { getJourneys } from "@/lib/astronomy/catalog";
-
-export const metadata = {
-  title: "Journeys | CosmoLens",
-};
-
+export const metadata = { title: "Journeys | CosmoLens" };
 export default function JourneysPage() {
-  const journeys = getJourneys();
-
   return (
-    <section className="section">
-      <div className="app-container">
-        <div className="mb-8 max-w-3xl">
-          <div className="eyebrow">Guided Explorations</div>
-          <h1 className="mt-4 text-5xl font-semibold leading-tight md:text-6xl">Learn through evidence chains.</h1>
-          <p className="mt-5 text-[color:var(--muted)]">
-            Journeys connect observations, visualizations, and scientific interpretation into structured explorations.
+    <section className="workspace-section">
+      <div className="obs-container">
+        <header className="workspace-heading">
+          <p className="obs-kicker">Guided explorations</p>
+          <h1>Follow the evidence.</h1>
+          <p>
+            From a puzzling observation to a scientific explanation. Three
+            routes through the questions that shape astronomy.
           </p>
-        </div>
-
-        <div className="grid gap-5">
-          {journeys.map((journey) => (
-            <article key={journey.id} className="panel p-6">
-              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-                <div>
-                  <div className="eyebrow">{journey.status}</div>
-                  <h2 className="mt-3 text-3xl font-semibold">{journey.title}</h2>
-                  <p className="mt-3 max-w-3xl text-[color:var(--muted)]">{journey.summary}</p>
-                </div>
-                <Link className="button button-ghost" href={`/journeys/${journey.id}`}>
-                  Open journey
-                </Link>
+        </header>
+        <div className="journey-directory">
+          {getJourneys().map((journey, index) => (
+            <article key={journey.id}>
+              <span className="journey-number">0{index + 1}</span>
+              <div>
+                <h2>
+                  <Link href={`/journeys/${journey.id}`}>{journey.title}</Link>
+                </h2>
+                <p>{journey.summary}</p>
+                <details>
+                  <summary>
+                    Explore {journey.steps.length} evidence steps
+                  </summary>
+                  <ol>
+                    {journey.steps.map((step) => (
+                      <li key={step.id}>
+                        <Link href={`/journeys/${journey.id}#${step.id}`}>
+                          {step.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
               </div>
-              <div className="mt-6 grid gap-3 md:grid-cols-3">
-                {journey.steps.map((step, index) => (
-                  <div key={step.id} className="quiet-panel p-4">
-                    <div className="font-mono text-sm text-[color:var(--accent)]">{String(index + 1).padStart(2, "0")}</div>
-                    <h3 className="mt-3 font-semibold">{step.title}</h3>
-                    <p className="mt-2 text-sm text-[color:var(--muted)]">{step.summary}</p>
-                  </div>
-                ))}
-              </div>
+              <Link
+                className="button button-primary"
+                href={`/journeys/${journey.id}`}
+                aria-label={`Open journey: ${journey.title}`}
+              >
+                Open journey <ArrowUpRight aria-hidden="true" size={16} />
+              </Link>
             </article>
           ))}
         </div>

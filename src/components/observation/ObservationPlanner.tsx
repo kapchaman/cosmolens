@@ -116,13 +116,14 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
             <span className="font-semibold">Privacy boundary</span>
           </div>
           <p className="mt-2 text-sm text-[color:var(--muted)]">
-            This MVP does not request precise location. Future location mode should ask permission and avoid storing exact coordinates by default.
+            Your selections stay on this device. No precise location is requested.
           </p>
         </div>
       </aside>
 
       <div className="grid gap-6">
         <section className="panel p-5 md:p-6">
+          <p className="mb-5 text-sm text-[color:var(--muted)]">Seasonal shortlist only: month ranges are approximate editorial guidance, not calculated visibility windows. Latitude bands are broad. Horizon, local time, cloud, moonlight and equipment can change what you see. Check a location-specific sky chart before observing.</p>
           <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
             <div>
               <div className="eyebrow">Seasonal Targets</div>
@@ -131,6 +132,7 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
             <span className="confidence mt-0">{seasonalTargets.length} matches</span>
           </div>
 
+          <p className="mb-5 text-sm text-[color:var(--muted)]">Background guides: <a className="underline" href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/spot-the-young-stars-of-the-hyades-and-pleiades/" target="_blank" rel="noreferrer">Pleiades and Orion</a> · <a className="underline" href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/catch-andromeda-rising/" target="_blank" rel="noreferrer">Andromeda in northern autumn</a>.</p>
           {seasonalTargets.length ? (
             <div className="grid gap-4 md:grid-cols-2">
               {seasonalTargets.map((target) => (
@@ -142,7 +144,7 @@ export function ObservationPlanner({ targets }: { targets: ObservationTarget[] }
                   </div>
                   <h3 className="mt-4 text-xl font-semibold">{target.name}</h3>
                   <p className="mt-2 text-sm text-[color:var(--muted)]">{target.note}</p>
-                  <div className="mt-4 text-sm text-[color:var(--muted)]">Best time: {target.bestTime}</div>
+                  <div className="mt-4 text-sm text-[color:var(--muted)]">Typical time: {target.bestTime}</div>
                   {target.atlasObjectId ? (
                     <Link className="button button-ghost mt-4" href={`/objects/${target.atlasObjectId}`}>
                       Atlas entry

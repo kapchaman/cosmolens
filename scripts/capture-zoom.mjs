@@ -67,7 +67,7 @@ try {
   const worker =
     context.serviceWorkers()[0] ||
     (await context.waitForEvent("serviceworker"));
-  for (const route of ["/", "/lab", "/atlas"]) {
+  for (const route of (process.env.CAPTURE_ROUTES?.split(",") || ["/", "/lab", "/atlas"])) {
     const page = await context.newPage();
     await page.goto(base + route);
     await page.locator("h1").waitFor();
@@ -111,7 +111,7 @@ try {
     assert.deepEqual(metrics.brokenImages, []);
     // Capture the initial viewport before focus/scroll changes. A fresh tab per
     // route avoids stale compositor tiles when Chromium tab zoom is active.
-    const slug = route === "/" ? "home" : route.slice(1);
+    const slug = route === "/" ? "home" : route.split("?")[0].slice(1).replaceAll("/", "-");
     await page.screenshot({ path: `${out}/${slug}-200-percent-view.png` });
     // Controls remain reachable and operable after reflow, even below the fold.
     if (route === "/atlas") {
@@ -135,6 +135,30 @@ try {
       assert.equal(await slider.inputValue(), "3");
       await page.keyboard.press("Home");
       for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
+    }
+    if (route.startsWith("/compare")) {
+      await page.getByLabel("Primary object").selectOption("europa");
+      await page.getByLabel("Comparison object").selectOption("enceladus");
+      const table = page.getByRole("table");
+      assert.ok(await table.evaluate((el) => el.scrollWidth <= el.clientWidth + 1));
+      assert.ok((await table.innerText()).includes("3,122"));
+      assert.ok((await table.innerText()).includes("about 500"));
+    }
+    if (route === "/my-cosmos") {
+      await page.getByLabel("Note title", { exact: true }).fill("Zoom QA");
+      await page.getByLabel("Note body", { exact: true }).fill("Readable at 200 percent.");
+      await page.getByRole("button", { name: "Add note" }).click();
+      await page.getByRole("button", { name: "Remove note Zoom QA", exact: true }).click();
+      await page.getByRole("button", { name: "Undo removal" }).click();
+      assert.ok((await page.locator("#journal-notes").innerText()).includes("Readable at 200 percent."));
+    }
+    if (route.includes("/journeys/")) {
+      await page.getByRole("link", { name: "Start journey", exact: true }).click();
+      assert.equal(await page.getByText("Visualization planned").count(), 0);
+      for (const slider of await page.getByRole("slider").all()) {
+        await slider.focus(); await page.keyboard.press("End");
+        assert.equal(await slider.inputValue(), await slider.getAttribute("max"));
+      }
     }
     results.push({ route, zoom, metrics });
     await page.close();

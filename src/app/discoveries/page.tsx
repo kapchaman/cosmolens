@@ -8,18 +8,18 @@ export const metadata: Metadata = {
 
 export default function DiscoveriesPage() {
   return (
-    <section className="section">
-      <div className="app-container">
-        <div className="mb-8 max-w-4xl">
+    <section className="workspace-section">
+      <div className="obs-container">
+        <div className="workspace-heading">
           <div className="eyebrow">Latest Discoveries</div>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">
-            Official source feed, not fabricated news.
+          <h1>
+            Dispatches from the universe.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--muted)]">
-            CosmoLens surfaces astronomy and space-science updates only when official sources respond.
+          <p>
+            Astronomy and space-science updates from NASA, JPL, and ESA. Read each discovery at its original source.
           </p>
         </div>
-        <LatestDiscoveriesPanel compact showOpenLink={false} />
+        <LatestDiscoveriesPanel compact showOpenLink={false} showHeading={false} />
       </div>
     </section>
   );

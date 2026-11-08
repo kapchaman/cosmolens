@@ -13,7 +13,7 @@ No deployment has been performed. This runbook prepares a release with **AI disa
 
 ## Review and release procedure
 
-1. Review PRs in order #4, #5, #6, #7, #8, then #9. After an approved merge, retarget the next PR to main and rebase if needed (especially after squash merging). Re-run CI on the resulting head; a green stacked branch is not proof that a differently merged commit is green.
+1. PRs #4–9 are already in main. Review PR #10, then its audit-completion follow-up. After an approved merge, retarget the next PR to main and rebase if needed (especially after squash merging). Re-run CI on the resulting head; a green stacked branch is not proof that a differently merged commit is green.
 2. Record the exact candidate SHA, environment, owner and rollback SHA. Do not bundle unrelated features after the November 6 freeze.
 3. Require TypeScript, unit/API tests, isolated Redis tests, build and browser tests. Inspect browser artifacts. Run `npm audit --omit=dev --audit-level=high` and investigate findings rather than blindly updating dependencies.
 4. On the approved private preview, verify TLS, expected commit, root/object/journey routes, unknown-route 404, Atlas/scale URLs and NASA/news fallback behavior. Verify security headers survive the host's proxy.
@@ -45,3 +45,10 @@ AI remains hard-disabled. If a later approved release activates it, its emergenc
 - Manual accessibility / science / performance evidence:
 - Log retention / monitor / alert recipient / support channel:
 - Known limitations: AI offline; seasonal planner; browser-local journal; schematic visualizations.
+
+
+## Candidate checkpoint — 2026-11-08
+
+PRs #4–9 are already present in main. PR #10 remains unmerged; the continuation is stacked on its head. Do not deploy only the continuation diff without its prototype base. See `docs/observatory/COMPLETION_REPORT.md` for the tested tree and evidence.
+
+The source implementation and repeatable checks are ready for founder review. The actual release record above deliberately remains incomplete for host identity, project owner, URL, free-tier terms, rollback deployment, operational contact and human acceptance. No values have been guessed and no public/private hosted preview has been created during this continuation. The next authorized action stops at a reviewable PR.

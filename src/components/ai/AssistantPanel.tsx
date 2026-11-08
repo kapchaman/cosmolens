@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
 import { Bot, Send, Sparkles } from "lucide-react";
 import { boundedHistory } from "@/lib/ai/history";
 import { AI_LIMITS } from "@/lib/ai/limits";
@@ -97,6 +98,14 @@ function AssistantConversation({
     }
   }
 
+  if (!available) return (
+    <aside className="obs-offline" aria-label="Assistant availability">
+      <Bot aria-hidden="true" size={18} />
+      <p role="status">{checking ? "Checking assistant availability…" : "AI assistance is temporarily unavailable. Explore the curated records and their scientific sources."}</p>
+      <Link href="/atlas">Explore atlas</Link>
+    </aside>
+  );
+
   return (
     <div className="panel p-5">
       <div className="mb-5 flex items-start justify-between gap-4">
@@ -112,7 +121,6 @@ function AssistantConversation({
         <Sparkles aria-hidden="true" size={18} color="var(--muted)" />
       </div>
 
-      {!available ? <p className="quiet-panel mb-4 p-3 text-sm text-[color:var(--muted)]" role="status">{checking ? "Checking assistant availability…" : "AI assistance is temporarily unavailable. Explore the atlas, source links, and guided journeys while it is offline."}</p> : null}
       <div className="mb-4 flex flex-wrap gap-2" aria-label="AI modes">
         {modes.map((item) => (
           <button

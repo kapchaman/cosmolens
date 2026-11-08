@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function MyCosmosPage() {
   return (
-    <section className="section">
-      <div className="app-container">
-        <div className="mb-8 max-w-4xl">
+    <section className="workspace-section">
+      <div className="obs-container">
+        <div className="workspace-heading">
           <div className="eyebrow">My Cosmos</div>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">Personal exploration journal</h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--muted)]">
+          <h1>Your corner of the cosmos.</h1>
+          <p>
             Saved objects, unresolved questions, and notes from this device.
           </p>
         </div>

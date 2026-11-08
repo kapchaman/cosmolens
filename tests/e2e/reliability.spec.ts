@@ -142,7 +142,7 @@ test("disabled AI is explained before sending a question", async ({ page }) => {
   );
   await expect(
     page.getByRole("button", { name: "Ask CosmoLens AI" }),
-  ).toBeDisabled();
+  ).toHaveCount(0);
 });
 
 test("clearing planner date produces no NaN or fabricated phase", async ({

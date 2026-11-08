@@ -31,6 +31,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run typecheck
       - run: npm test
       - run: npm run test:redis
@@ -47,6 +48,9 @@ jobs:
           for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3100/api/health >/dev/null && break; sleep 1; done
           node scripts/capture-observatory.mjs after
           node scripts/capture-zoom.mjs
+          export CAPTURE_ROUTES='/compare?left=europa&right=enceladus,/my-cosmos,/journeys/dark-matter-evidence,/journeys/life-of-a-star,/journeys/universe-expansion,/discoveries'
+          CAPTURE_OUTPUT=test-results/completion-after node scripts/capture-observatory.mjs after
+          CAPTURE_OUTPUT=test-results/completion-zoom node scripts/capture-zoom.mjs
       - name: Upload browser evidence
         if: always()
         uses: actions/upload-artifact@v4
